@@ -1,0 +1,335 @@
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Reconstruction-Score-Threshold">Reconstruction Score Threshold<a class="anchor-link" href="#Reconstruction-Score-Threshold">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When using Matrix Factorization there are a number of different hyper parameters which require tuning in order to fit the model - the most important one being the NMF reconstruction score theshold for song recommendation.</p>
+<p>When NMF reconstructs the song list for a given seed playlist - it moves from a binary representation of song presence on a playlist to a continuous "score". Song are assigned a positive numeric value representing their score for how much they are "recommended" as part of the seed playlist. Therefore a seed playlist that may truly contain a few songs (few 1s) could result in hundred or thousands of non-zero scores. In order to make suggestions, we need to have an empirical method for thresholding this value, creating a cut off at which point the songs below that score are no longer really relevant and all songs above are deemed to be important enough for recommendation.</p>
+<p>In order to do this we performed cross-validation on the prediction threshold of the NMF model for a number of random playlists. We created a scoring metric to  empircally calculate how well the model performed for a given threshold by using cosine similarity to other nearby playlists. For each tested threshold, we return a selection of reccommended songs. To determine how good these predictions are, we see the if these predictions appear in a pool of songs created from a set of cosine similar playlists.</p>
+<p>Cosine similarity allows us to use an independent method for calculating which playlists are mathematically close to a given playlist (in the song-playlist matrix space). We expect the NMF model to perform well in the sense that it predicts songs that would be found on similar playlists and hence this cosine similarity metric is a valid benchmark.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Running-matrix-factorization">Running matrix factorization<a class="anchor-link" href="#Running-matrix-factorization">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The first stage in cross-validation is to fit the NMF model, to improve computational time and avoid making the cross validation intractible by having to fit the NMF at each iteration of the cross validation, the model will be fit once on all the data. This is less robust than splitting to train/test and only fitting the model on train, this would need to be done for each threshold value and for each CV playlist (10 thresholds with 10 validation playlists already results in 100 fittings of the NMF model).</p>
+<p>By simplifying we can run the NMF model once and then rely on the full reconstructed matrix to select and cross validation playlists from.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">nmf</span> <span class="o">=</span> <span class="n">NMF</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">109</span><span class="p">,</span>
+          <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">l1_ratio</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">playlist_info</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:])</span>
+<span class="n">nmf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+<span class="n">Q</span> <span class="o">=</span> <span class="n">nmf</span><span class="o">.</span><span class="n">components_</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">nmf</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+<span class="n">recon</span> <span class="o">=</span> <span class="n">P</span><span class="nd">@Q</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Cross-Validation-Function">Cross Validation Function<a class="anchor-link" href="#Cross-Validation-Function">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The script below is the main call for the cross validation. The custom function <code>cv_nmf_threshold</code> utilizes the many helper functions above to produce an average score for each threshold value specified.</p>
+<p>It is worth noting that the scoring for each playlist is scaled to be exactly between zero and one so that each individual playlist's scores will be on the same scale and hence a single cutoff value can be used for threshold.</p>
+<p>The general flow of cross validation function:</p>
+<p><code>cv_nmf_threshold</code></p>
+<ol>
+<li>randomly sample <code>cv_num</code> of playlists from the data.</li>
+<li>for each playlist run <code>get_pool_of_cosine_songs</code></li>
+<li>run <code>thresholded_songs</code> to get the pool of suggested songs which pass the threshold</li>
+<li>run <code>score_similarity</code> with these two pools to score how similar the suggested songs are to the pool of cosine similar songs</li>
+<li>average the scores for each playlist and run a final cv score</li>
+</ol>
+<p><code>get_pool_of_cosine_songs</code>- use cosine similarity (<code>score_pl_cosine</code>) to find the nearest n_nearest_pls playlists to the randomly selected one, pool all their songs together and return this collection of songs</p>
+<p><code>score_similarity</code> - create a count of each unique song in the cosine similar pool, calculate a positive score based on the sum of songs the model correctly matched (weighted by number of times it appears in the pool) and a negative score for how many it predicts that are not within the cosine similar pool</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Cross validation</span>
+<span class="n">thresholds_to_try</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]</span>
+
+<span class="n">threshold_scores</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">thresh</span> <span class="ow">in</span> <span class="n">thresholds_to_try</span><span class="p">:</span>
+
+    <span class="n">score</span> <span class="o">=</span> <span class="n">cv_nmf_threshold</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">playlist_info</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]),</span> <span class="n">recon</span><span class="p">,</span> <span class="n">threshold_value</span><span class="o">=</span><span class="n">thresh</span><span class="p">,</span> <span class="n">weighting</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cv_num</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_nearest_pls</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">threshold_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The results of this cosine similarity cross validation can be seen below. There appears to be an optimum threshold value around 0.25-0.35 where the score is highest. Any lower a threshold and the too many of the songs being recommended are not on the 20 nearest cosine similar playlists. Any higher and the model is missing possible positively scoring songs.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thresholds_to_try</span><span class="p">,</span> <span class="n">threshold_scores</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;CV Score for a given NMF Threshold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Threshold Value&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Score&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As such we now have a mathematically verified value for threshold to take forward for testing and validation. It is worth noting that we set some hyper parameters heurstically prior to starting the cross validation to avoid having too many parameters to make the model untunable. For example the number of cosine similar playlists was set to a fixed value of 20 as leaving this as a variable for cross validation would cause the model to become unstable.</p>
+<p>In the future we would like to implement more intelligent penalty factors to be able to control for these currently fixed parameters in the cross validation modelling.</p>
+<p>Looking at the test playlist set aside earlier, we can be see from below that 99 songs passed the threshold giving a good number of possible candidates to toward forward.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">suggested_indices</span> <span class="o">=</span> <span class="n">thresholded_songs</span><span class="p">(</span><span class="n">first_pl_recon</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Length of suggested song pool:&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">suggested_indices</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Length of suggested song pool: 99
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Supporting-Functions">Supporting Functions<a class="anchor-link" href="#Supporting-Functions">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Optimization functions</span>
+<span class="k">def</span> <span class="nf">score_similarity</span><span class="p">(</span><span class="n">suggested_songs</span><span class="p">,</span> <span class="n">pooled_songs_counts</span><span class="p">,</span> <span class="n">weighting</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    
+    <span class="c1"># Calculate a positive weighting dictionary of songs the model predicted correctly</span>
+    <span class="n">postive_hits</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pooled_songs_counts</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">suggested_songs</span><span class="p">}</span>
+    
+    <span class="c1"># Calculate a negative weighting based on the number of incorrect songs it suggests</span>
+    <span class="n">incorrect_pred</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">suggested_songs</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">postive_hits</span><span class="p">)</span> 
+
+    <span class="c1"># Sum the total positive scores and apply the manual weighting</span>
+    <span class="n">positive_weighted_score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">postive_hits</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">*</span> <span class="n">weighting</span>
+    
+    <span class="c1"># Calculate total score</span>
+    <span class="n">total_weighted_score</span> <span class="o">=</span> <span class="n">positive_weighted_score</span> <span class="o">-</span> <span class="n">incorrect_pred</span>
+    
+    <span class="c1"># Scaled based on playlist lenght to avoid biasing for longer playlists</span>
+    <span class="n">total_weighted_score</span> <span class="o">=</span> <span class="n">total_weighted_score</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">pooled_songs_counts</span><span class="p">)</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">total_weighted_score</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">scale_recon_vector</span><span class="p">(</span><span class="n">recon_vector</span><span class="p">):</span>
+    
+    <span class="c1"># Rescales and returns a vector</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">recon_vector</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">mas</span> <span class="o">=</span> <span class="n">MaxAbsScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">transformed_vector</span> <span class="o">=</span> <span class="n">mas</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    
+    <span class="k">return</span><span class="p">(</span><span class="n">transformed_vector</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">cv_nmf_threshold</span><span class="p">(</span><span class="n">song_playlist_array</span><span class="p">,</span> <span class="n">recon_array</span><span class="p">,</span> <span class="n">threshold_value</span><span class="p">,</span> <span class="n">weighting</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cv_num</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">n_nearest_pls</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">109</span><span class="p">):</span>
+
+    <span class="c1"># Choose randomly from array</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">109</span><span class="p">)</span>
+    <span class="n">random_pl_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">song_playlist_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cv_num</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    
+    <span class="c1"># Cross validate on each of the random playlist choices and score for each one</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">random_pl_indices</span><span class="p">:</span>
+        <span class="n">pool_of_valid_songs_weighted</span> <span class="o">=</span> <span class="n">get_pool_of_cosine_songs</span><span class="p">(</span><span class="n">song_playlist_array</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">n_nearest_pls</span><span class="p">)</span>
+        <span class="n">suggested_songs</span> <span class="o">=</span> <span class="n">thresholded_songs</span><span class="p">(</span><span class="n">recon_array</span><span class="p">[:,</span><span class="n">index</span><span class="p">],</span> <span class="n">threshold_value</span><span class="p">)</span>
+
+        <span class="n">score</span> <span class="o">=</span> <span class="n">score_similarity</span><span class="p">(</span><span class="n">suggested_songs</span><span class="p">,</span> <span class="n">pool_of_valid_songs_weighted</span><span class="p">,</span> <span class="n">weighting</span><span class="p">)</span>
+        <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+    
+    <span class="c1"># Calculate a weighted score (MSE) from the cross validation</span>
+    <span class="n">final_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+
+    <span class="c1"># Reset seed</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">final_score</span>
+
+
+<span class="k">def</span> <span class="nf">thresholded_songs</span><span class="p">(</span><span class="n">reconstructed_vector</span><span class="p">,</span> <span class="n">threshold_val</span><span class="p">):</span>
+    
+    <span class="c1"># Given a threshold set all songs to zero which fall below it</span>
+    <span class="n">nmf_score_vector</span> <span class="o">=</span> <span class="n">scale_recon_vector</span><span class="p">(</span><span class="n">reconstructed_vector</span><span class="p">)</span>
+    <span class="n">song_indices_above_threshold</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">nmf_score_vector</span> <span class="o">&gt;</span> <span class="n">threshold_val</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">song_indices_above_threshold</span>
+
+
+<span class="k">def</span> <span class="nf">score_pl_cosine</span><span class="p">(</span><span class="n">pl_song_matrix</span><span class="p">,</span> <span class="n">pl_index</span><span class="p">):</span>
+    
+    <span class="c1"># Perform the cosine scoring from one playlist to another</span>
+    <span class="n">true_pl</span> <span class="o">=</span> <span class="n">pl_song_matrix</span><span class="p">[:,</span> <span class="n">pl_index</span><span class="p">]</span>
+    <span class="n">cosine_scores</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># Loop through all other playlists and return list of all scores</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">pl_song_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">test_pl</span> <span class="o">=</span> <span class="n">pl_song_matrix</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="n">cosine_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spatial</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">cosine</span><span class="p">(</span><span class="n">true_pl</span><span class="p">,</span> <span class="n">test_pl</span><span class="p">))</span>
+    
+    <span class="k">return</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cosine_scores</span><span class="p">))</span>
+    
+<span class="k">def</span> <span class="nf">get_pool_of_cosine_songs</span><span class="p">(</span><span class="n">pl_song_matrix</span><span class="p">,</span> <span class="n">pl_index</span><span class="p">,</span> <span class="n">n_playlists</span><span class="p">):</span>
+
+    <span class="c1"># Use spatial cosine similarity to find all the songs on the nearest 10 playlists</span>
+    <span class="c1"># to a chosen playlist</span>
+    <span class="n">cosine_scores</span> <span class="o">=</span> <span class="n">score_pl_cosine</span><span class="p">(</span><span class="n">pl_song_matrix</span><span class="p">,</span> <span class="n">pl_index</span><span class="p">)</span>
+    
+    <span class="c1"># Sort from closest to furthest playlist</span>
+    <span class="n">top_playlists</span> <span class="o">=</span> <span class="n">cosine_scores</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[</span><span class="mi">0</span><span class="p">:</span><span class="n">n_playlists</span><span class="p">]</span>
+    
+    <span class="c1"># Loop through the top n_playlists and add songs to pool</span>
+    <span class="n">all_song_indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">top_playlists</span><span class="p">:</span>
+
+        <span class="n">first_pl</span> <span class="o">=</span> <span class="n">pl_song_matrix</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span>
+        <span class="n">song_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">first_pl</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+        <span class="n">all_song_indices</span> <span class="o">=</span> <span class="n">all_song_indices</span> <span class="o">+</span> <span class="n">song_indices</span>
+    
+    <span class="n">all_song_counts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">all_song_indices</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">all_song_counts</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Helper functions</span>
+<span class="k">def</span> <span class="nf">get_true_song_names</span><span class="p">(</span><span class="n">playlist_vector</span><span class="p">,</span> <span class="n">track_pl_info</span><span class="o">=</span><span class="n">playlist_info</span><span class="p">,</span> <span class="n">track_info</span><span class="o">=</span><span class="n">track_info</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">indices</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">song_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">playlist_vector</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">song_indices</span> <span class="o">=</span> <span class="n">playlist_vector</span>
+
+    <span class="n">song_ids</span> <span class="o">=</span> <span class="n">track_pl_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">song_indices</span><span class="p">,</span> <span class="s1">&#39;track_uri&#39;</span><span class="p">]</span>
+
+    <span class="n">list_of_song_names</span> <span class="o">=</span> <span class="n">track_info</span><span class="p">[</span><span class="n">track_info</span><span class="p">[</span><span class="s1">&#39;track_uri&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">song_ids</span><span class="p">)][</span><span class="s1">&#39;track_name&#39;</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">list_of_song_names</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+ 
+
