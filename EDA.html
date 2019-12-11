@@ -58,10 +58,19 @@
     </div>
 
     <li class="nav-item">
-      <a class="nav-link collapsed" href="Intro.html">
+      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseIntro" aria-expanded="true" aria-controls="collapseIntro">
         <i class="fas fa-fw fa-lightbulb"></i>
         <span>Intro</span>
       </a>
+      <div id="collapseIntro" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+          <h6 class="collapse-header">Intro Sections:</h6>
+          <a class="collapse-item" href="Intro.html">Introduction &<br>Description of Data</a>
+          <a class="collapse-item" href="Intro.html#Section2">Challenges<br>Data Size & Scope</a>
+          <a class="collapse-item" href="Intro.html#Section3">Challenges<br>Benchmarking & Comparisons</a>
+          <a class="collapse-item" href="Intro.html#Section4">Data Queries</a>
+        </div>
+      </div>
     </li>
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
@@ -91,8 +100,9 @@
         <div class="bg-white py-2 collapse-inner rounded">
           <h6 class="collapse-header">EDA Sections:</h6>
           <a class="collapse-item" href="EDA.html">Main</a>
-          <a class="collapse-item" href="EDA.html#Section1">Section1</a>
-          <a class="collapse-item" href="EDA.html#Section2">Section2</a>
+          <a class="collapse-item" href="EDA.html#Section2">General Stats</a>
+          <a class="collapse-item" href="EDA.html#Section3">Song Characteristics PCA</a>
+          <a class="collapse-item" href="EDA.html#Section4">Playlist Space PCA</a>
         </div>
       </div>
     </li>
@@ -149,7 +159,6 @@
     <div id="content">
 
 
-
       <!-- Begin Page Content -->
       <div class="container-fluid">
 
@@ -165,14 +174,23 @@
           <div class="col-xl-12">
             <div class="card shadow mb-4">
               <!-- Card Header - Dropdown -->
-              <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Section 1</a></h6>
-              </div>
+              <a name="Section1">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Our EDA</h6>
+                </div>
+              </a>
               <!-- Card Body -->
               <div class="card-body">
                 <p>
-                  Section 1 Here
-                  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                  We were initially provided with Spotify’s million playlist dataset, which was spread across a selection of
+                  1000 csv files. In order to best represent this information, we wanted to turn this into a single binary
+                  occurrence matrix with unique songs as rows, and playlists as columns, with minimal memory impact<br><br>
+                  We used track_uri as a unique identifier to ensure there would be no duplicates, and stored respective
+                  records for album, artist and song’s relative playlist position with the track name
+                  we leveraged Google Colab to read in the raw data from each file and read line by line, adding unseen
+                  songs to our dataframe and updating occurrences of existing songs on the new column for the playlist in
+                  question. We further exploited use of IO (writing to disk) and reading the csv’s iteratively to save
+                  it in a file of a reasonable size
                 </p>
               </div>
             </div>
@@ -180,14 +198,130 @@
           <div class="col-xl-12">
             <div class="card shadow mb-4">
               <!-- Card Header - Dropdown -->
-              <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary"><a name="Section2">Section 2</a></h6>
-              </div>
+              <a name="Section2">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">General Stats</h6>
+                </div>
+              </a>
               <!-- Card Body -->
               <div class="card-body">
                 <p>
-                  Section 2 Here
-                  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                  Overall, we found 2,262,292 unique tracks, and each song appears on an average of 29 playlists.
+                  The million playlists range in length from 3 to 341 tracks, and have an average length is 65 tracks.
+                  <br><br>
+                  We observed that the majority of songs are on only 1 or 2 playlists (median=2), whereas a relatively
+                  small number of songs appear on a huge number of playlists:<br>
+                  <div class="cardimage">
+                    <img src="img/eda-preprocessing-violin.png" alt="violinplot" width="90%">
+                  </div><br>
+                Upon querying the Spotify API, we were fortunate that all songs present had non-null metric values, meaning
+                that we were not required to make any data imputations.<br><br>
+
+                Upon aggregating general song metrics, we wanted to understand the distribution of metrics values -- both for
+                the range of values that they can assume and also to understand if any of the distributions were heavily
+                skewed (a point to keep in mind when making model assumptions).
+                <div class="cardimage">
+                  <img src="img/dists.png" alt="CorrelationMatrix" width="50%">
+                </div>
+                <ul>
+                <li>Danceability, valence and tempo were the only reasonably symmetric plots. This is reassuring that there
+                  is a more even spread of these values that we are exposed to in the data. These may show themselves to
+                  be strong values to split on.</li>
+                  <li>Speechiness, acousticness, instrumentalness and liveness are all heavily right skewed. This may indicate
+                    that it will be harder to separate or uniquely identify songs based on these characteristics if they are all so low.
+                  </li>
+                  <li>On the other hand, mode is bimodal and key has equal distribution around each integer. These may be weaker
+                    predictors on their own.
+                  </li>
+                </li>
+                </ul>
+                <br>
+                We further wanted to understand any correlations between behaviors of these individual song metric
+                variables. Using a sample of 170k songs, we understood a few major correlations:
+                <div class="cardimage">
+                  <img src="img/correlation.png" alt="CorrelationMatrix" width="50%">
+                </div>
+                <ul>
+                  <li>Loudness and energy have a strong negative correlation with acousticness</li>
+                  <li>Key appears to be relatively independent of other types of metric</li>
+                  <li>Songs that have high instrumentalness also tend to have lower loudness, whereas high energy corresponds
+                    to more loudness.</li>
+                  <li>It also made sense to see that danceability was positively correlated with valence which is
+                    indirectly a measure of "happiness" in a song.</li>
+                </ul>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-12">
+            <div class="card shadow mb-4">
+              <!-- Card Header - Dropdown -->
+              <a name="Section3">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Song Characteristics PCA</h6>
+                </div>
+              </a>
+              <!-- Card Body -->
+              <div class="card-body">
+                <p>
+                  A very important step in our approach was to perform PCA on the song/playlist space and on the
+                  song/characteristics space. This dimensionality reduction is key in distilling features and similarities
+                  between songs, however it is often hard to interpret or visualize how it is working. For our EDA we
+                  wanted to understand how these two spaces are decomposed using PCA before moving into other techniques
+                  like Matrix factorization. Viewing both the songs characteristics and shared playlist space will give
+                  us an understanding of what information we can capture and whether there is a true signal to be used
+                  for modelling.
+                  <br><br>
+                  We quickly realized that focusing on individual song metrics such as tempo or valence does not lend
+                  itself well to distinct separation between two songs: for example both rap and country can have high
+                  speechiness metrics. This is why we decided to perform PCA to distill down the multidimensional song metrics.
+                  <br><br>
+                  Representing the combined song characteristics in fewer components would allow us to more easily score
+                  song closeness/similarity. Below is a breakdown of the first two principal components of the song
+                  characteristics, colored by the different characteristics themselves:
+                <div class="cardimage">
+                  <img src="img/song_pca_9_charac.png" alt="PCs" width="90%">
+                </div><br>
+                We can see that the principal components of the metrics space are able to clearly divide many of the
+                song metrics by themselves. We can clearly see a divide (in the first two PC space) between different
+                "types" of song - acousticness is high towards the far right and low toward the top left which is almost
+                exactly opposite to energy (which would make sense from a musical theory perspective).
+                <br><br>
+                Beyond the first two PCs, we can see that between the 3rd and 4th PCs, we are able to capture further
+                metric separations - between “key” - that weren’t separable between the first two. This shows how the
+                PCA is effectively "encoding" different elements on the songs across the different principal component
+                dimensions.
+
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-12">
+            <div class="card shadow mb-4">
+              <!-- Card Header - Dropdown -->
+              <a name="Section4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Playlist Space PCA</h6>
+                </div>
+              </a>
+              <!-- Card Body -->
+              <div class="card-body">
+                <p>
+                  We followed this investigation with an exploration of PCA dimensionality reduction of the “playlist space”
+                  -- representing relationships between songs and their presence on playlists. By compressing the large
+                  matrix of songs vs playlists into fewer dimensions, we should be able to detect regions of similar
+                  songs based on their proximity. To verify this hypothesis, we highlighted a region of songs belonging
+                  to a particular rap playlist on the 1x2 PC space. We can see a general clustering of these songs here.
+                  What is more interesting is that if we instead overlay the variable of speechiness on the plot, we can
+                  also see a general clustering and region formed by these songs which actually overlaps with the rap
+                  playlist mentioned before, and aligns with general characteristics of the rap genre.
+                <div class="cardimage">
+                  <img src="img/playlist_pca_rap.png" alt="RapPC" width="90%">
+                </div><br>
+                This confirms by
+                doing playlist-based PCA, we are inherently incorporating some underlying information and trends which
+                are based on the raw metrics of these songs in addition to more qualitative “human touch” measures like
+                mood, genre or theme. This would be a good starting point for our modeling.
                 </p>
               </div>
             </div>

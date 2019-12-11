@@ -86,10 +86,19 @@
         </div>
 
         <li class="nav-item">
-            <a class="nav-link collapsed" href="Intro.html">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseIntro" aria-expanded="true" aria-controls="collapseIntro">
                 <i class="fas fa-fw fa-lightbulb"></i>
                 <span>Intro</span>
             </a>
+            <div id="collapseIntro" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Intro Sections:</h6>
+                    <a class="collapse-item" href="Intro.html">Introduction &<br>Description of Data</a>
+                    <a class="collapse-item" href="Intro.html#Section2">Challenges<br>Data Size & Scope</a>
+                    <a class="collapse-item" href="Intro.html#Section3">Challenges<br>Benchmarking & Comparisons</a>
+                    <a class="collapse-item" href="Intro.html#Section4">Data Queries</a>
+                </div>
+            </div>
         </li>
         <!-- Nav Item - Utilities Collapse Menu -->
         <li class="nav-item">
@@ -119,8 +128,9 @@
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">EDA Sections:</h6>
                     <a class="collapse-item" href="EDA.html">Main</a>
-                    <a class="collapse-item" href="EDA.html#Section1">Section1</a>
-                    <a class="collapse-item" href="EDA.html#Section2">Section2</a>
+                    <a class="collapse-item" href="EDA.html#Section2">General Stats</a>
+                    <a class="collapse-item" href="EDA.html#Section3">Song Characteristics PCA</a>
+                    <a class="collapse-item" href="EDA.html#Section4">Playlist Space PCA</a>
                 </div>
             </div>
         </li>
@@ -191,22 +201,7 @@
                 <div class="row">
 
                     <!-- Area Chart -->
-                    <div class="col-xl-12">
-                        <div class="card shadow mb-4">
-                            <!-- Card Header - Dropdown -->
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Introduction</a></h6>
-                            </div>
-                            <!-- Card Body -->
-                            <div class="card-body">
-<!--                                <div id="includedContent"></div>-->
-                                <p>
 
-                                    <br><br>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
                     <div class="col-xl-12">
                         <div class="card shadow mb-4">
                             <!-- Card Header - Dropdown -->

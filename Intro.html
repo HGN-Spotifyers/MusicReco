@@ -58,10 +58,19 @@
     </div>
 
     <li class="nav-item active">
-      <a class="nav-link collapsed" href="Intro.html">
+      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseIntro" aria-expanded="true" aria-controls="collapseIntro">
         <i class="fas fa-fw fa-lightbulb"></i>
         <span>Intro</span>
       </a>
+      <div id="collapseIntro" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+          <h6 class="collapse-header">Intro Sections:</h6>
+          <a class="collapse-item" href="Intro.html">Introduction &<br>Description of Data</a>
+          <a class="collapse-item" href="Intro.html#Section2">Challenges<br>Data Size & Scope</a>
+          <a class="collapse-item" href="Intro.html#Section3">Challenges<br>Benchmarking & Comparisons</a>
+          <a class="collapse-item" href="Intro.html#Section4">Data Queries</a>
+        </div>
+      </div>
     </li>
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
@@ -91,8 +100,9 @@
         <div class="bg-white py-2 collapse-inner rounded">
           <h6 class="collapse-header">EDA Sections:</h6>
           <a class="collapse-item" href="EDA.html">Main</a>
-          <a class="collapse-item" href="EDA.html#Section1">Section1</a>
-          <a class="collapse-item" href="EDA.html#Section2">Section2</a>
+          <a class="collapse-item" href="EDA.html#Section2">General Stats</a>
+          <a class="collapse-item" href="EDA.html#Section3">Song Characteristics PCA</a>
+          <a class="collapse-item" href="EDA.html#Section4">Playlist Space PCA</a>
         </div>
       </div>
     </li>
@@ -167,7 +177,7 @@
             <div class="card shadow mb-4">
               <!-- Card Header - Dropdown -->
               <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary"><a name="Section2">Introduction & Description of Data</a></h6>
+                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Introduction & Description of Data</a></h6>
               </div>
               <!-- Card Body -->
               <div class="card-body">
@@ -200,6 +210,90 @@
                   and a whole host of other genres and styles. In order to replicate this sort of diversity it is vital for us
                   to generate an understanding of this “hidden dimension” of the data.
 
+                </p>
+              </div>
+
+            </div>
+          </div>
+          <div class="col-xl-12">
+            <div class="card shadow mb-4">
+              <!-- Card Header - Dropdown -->
+              <a name="Section2">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Challenges - Data Size and Scope</h6>
+                </div>
+              </a>
+              <!-- Card Body -->
+              <div class="card-body">
+                <p>
+                  One of the major practical challenges of the Spotify million playlist data is it’s sheer size.
+                  Each playlist can range in length from a few, to a few hundred songs giving us tens if not hundreds
+                  of millions of songs. Each of these songs have a wealth of meta-data available on the Spotify API of
+                  which we could leverage as much or as little as possible. Just the simple song to playlist csvs are
+                  approximately 11GBs of data and this is prior to attaching any of the song characteristics data.
+                  The first step of this project will be to come up with a methodology for storage and processing of
+                  this data in an efficient manner.
+                </p>
+              </div>
+
+            </div>
+          </div>
+          <div class="col-xl-12">
+            <div class="card shadow mb-4">
+              <!-- Card Header - Dropdown -->
+              <a name="Section3">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Challenges - Benchmarking and Comparisons</h6>
+                </div>
+              </a>
+              <!-- Card Body -->
+              <div class="card-body">
+                <p>
+                  The biggest conceptual challenge in this project is one of benchmarking and evaluation. Given that we
+                  are attempting to recommend songs and playlists in a manner which is more varied and human than simply
+                  recommending songs with similar characteristics it doesn’t necessarily make sense to use these same
+                  characteristics to score how well the models are performing. Without a mathematical representation of
+                  fitness - a loss function - training traditional supervised machine learning models such as regression
+                  and supervised neural networks becomes problematic. Manual inspection can be used to some extent to
+                  ensure the model are recommending songs which we know to be similar in some regard but this is
+                  impractical when considering and comparing multiple models.
+                  <br><br>
+                  What we propose is that there is that framed in a specific manner, the song characteristics can still
+                  be a valid scoring metric. Simply put we wish to recreate a playlist in the manner a human would,
+                  recommending interesting and varied songs which are connected by some complex thread. So to benchmark
+                  how well a model is performing we can leverage these pre-specified human created playlists. Removing
+                  a portion of songs and then predicting new songs to replace them should allow us to directly compare
+                  these two sets. Whilst we wouldn’t expect the songs to be identical (there may be a huge variation of
+                  potentially valid songs) we will assume that the songs characteristics of the original, user selected,
+                  songs were chosen because they in some way “complete” the playlist. Therefore the closer the model
+                  suggested songs are to the originals the better the model is in terms of its ability to make playlists
+                  in a “human” manner. We are aware that this is an approximation but it should still allow for relative
+                  model comparison and scoring.
+
+                </p>
+              </div>
+
+            </div>
+          </div>
+          <div class="col-xl-12">
+            <div class="card shadow mb-4">
+              <!-- Card Header - Dropdown -->
+              <a name="Section4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Data Queries</h6>
+                </div>
+              </a>
+              <!-- Card Body -->
+              <div class="card-body">
+                <p>
+                  Before commencing with the modelling phase we first delve into the dataset itself to understand and
+                  draw out the key information which will help guide the approach. There are a number of questions we’d
+                  like to answer about the data before committing to a modelling approach and broadly these break down
+                  into two categories:
+                  <ol>
+                    <li>What do the song characteristics look like?</li>
+                    <li>What does the playlist and song space look like?</li>
+                  </ol>
                 </p>
               </div>
 
