@@ -12,12 +12,14 @@
   <title>Spotify Project - AC209A</title>
 
   <!-- Custom fonts for this template-->
+  <link rel='icon' href='img/favicon.ico' type='image/x-icon'/>
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans&display=swap" rel="stylesheet">
   <!-- Custom styles for this template-->
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+
 
 </head>
 
@@ -57,21 +59,32 @@
 
     <li class="nav-item">
       <a class="nav-link collapsed" href="Intro.html">
-        <i class="fas fa-fw fa-wrench"></i>
+        <i class="fas fa-fw fa-lightbulb"></i>
         <span>Intro</span>
       </a>
     </li>
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
-      <a class="nav-link collapsed" href="LitReview.html">
-        <i class="fas fa-fw fa-wrench"></i>
+      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLit" aria-expanded="true" aria-controls="collapseLit">
+        <i class="fas fa-fw fa-book-open"></i>
         <span>Lit Review</span>
       </a>
+      <div id="collapseLit" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+          <h6 class="collapse-header">Lit Review:</h6>
+          <a class="collapse-item" href="LitReview.html">Main</a>
+          <a class="collapse-item" href="LitReview.html#Section1">Intro</a>
+          <a class="collapse-item" href="LitReview.html#Section2">Content-Based Recs <br> vs. Collaborative Filtering</a>
+          <a class="collapse-item" href="LitReview.html#Section3">Explicit vs. Implicit Rating</a>
+          <a class="collapse-item" href="LitReview.html#Section4">Single vs. Multiple<br>Recommendations</a>
+          <a class="collapse-item" href="LitReview.html#Section5">Incorporating<br>User Feedback</a>
+        </div>
+      </div>
     </li>
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
       <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEDA" aria-expanded="true" aria-controls="collapseEDA">
-        <i class="fas fa-fw fa-cog"></i>
+        <i class="fas fa-fw fa-binoculars"></i>
         <span>EDA</span>
       </a>
       <div id="collapseEDA" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -87,7 +100,7 @@
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item active">
       <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseModels" aria-expanded="true" aria-controls="collapseModels">
-        <i class="fas fa-fw fa-cog"></i>
+        <i class="fas fa-fw fa-chart-line"></i>
         <span>Models</span>
       </a>
       <div id="collapseModels" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -103,7 +116,7 @@
     <!-- Nav Item - Utilities Collapse Menu -->
     <li class="nav-item">
       <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseResults" aria-expanded="true" aria-controls="collapseResults">
-        <i class="fas fa-fw fa-cog"></i>
+        <i class="fas fa-fw fa-tasks"></i>
         <span>Results</span>
       </a>
       <div id="collapseResults" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">

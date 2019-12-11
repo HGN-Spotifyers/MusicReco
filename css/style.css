@@ -8,3 +8,12 @@
     background-image: linear-gradient(180deg,#14224a 10%,#437763 100%);
     background-size: cover;
 }
+
+a{
+    word-wrap: break-word;
+}
+
+#accordionSidebar{
+    font-size: larger;
+    font-weight: bolder;
+}

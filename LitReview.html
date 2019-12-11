@@ -12,13 +12,15 @@
     <title>Spotify Project - AC209A</title>
 
     <!-- Custom fonts for this template-->
+    <link rel='icon' href='img/favicon.ico' type='image/x-icon'/>
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans&display=swap" rel="stylesheet">
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="css/lit-review.css">
+
 
 </head>
 
@@ -42,7 +44,7 @@
         <hr class="sidebar-divider my-0">
 
         <!-- Nav Item - Dashboard -->
-        <li class="nav-item active">
+        <li class="nav-item">
             <a class="nav-link" href="index.html">
                 <i class="fas fa-home"></i>
                 <span>Home</span></a>
@@ -58,21 +60,32 @@
 
         <li class="nav-item">
             <a class="nav-link collapsed" href="Intro.html">
-                <i class="fas fa-fw fa-wrench"></i>
+                <i class="fas fa-fw fa-lightbulb"></i>
                 <span>Intro</span>
             </a>
         </li>
         <!-- Nav Item - Utilities Collapse Menu -->
         <li class="nav-item active">
-            <a class="nav-link collapsed" href="LitReview.html">
-                <i class="fas fa-fw fa-wrench"></i>
+            <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseLit" aria-expanded="true" aria-controls="collapseLit">
+                <i class="fas fa-fw fa-book-open"></i>
                 <span>Lit Review</span>
             </a>
+            <div id="collapseLit" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Lit Review:</h6>
+                    <a class="collapse-item" href="LitReview.html">Main</a>
+                    <a class="collapse-item" href="LitReview.html#Section1">Intro</a>
+                    <a class="collapse-item" href="LitReview.html#Section2">Content-Based Recs <br> vs. Collaborative Filtering</a>
+                    <a class="collapse-item" href="LitReview.html#Section3">Explicit vs. Implicit Rating</a>
+                    <a class="collapse-item" href="LitReview.html#Section4">Single vs. Multiple<br>Recommendations</a>
+                    <a class="collapse-item" href="LitReview.html#Section5">Incorporating<br>User Feedback</a>
+                </div>
+            </div>
         </li>
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEDA" aria-expanded="true" aria-controls="collapseEDA">
-                <i class="fas fa-fw fa-cog"></i>
+                <i class="fas fa-fw fa-binoculars"></i>
                 <span>EDA</span>
             </a>
             <div id="collapseEDA" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -88,7 +101,7 @@
         <!-- Nav Item - Utilities Collapse Menu -->
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseModels" aria-expanded="true" aria-controls="collapseModels">
-                <i class="fas fa-fw fa-cog"></i>
+                <i class="fas fa-fw fa-chart-line"></i>
                 <span>Models</span>
             </a>
             <div id="collapseModels" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -104,7 +117,7 @@
         <!-- Nav Item - Utilities Collapse Menu -->
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseResults" aria-expanded="true" aria-controls="collapseResults">
-                <i class="fas fa-fw fa-cog"></i>
+                <i class="fas fa-fw fa-tasks"></i>
                 <span>Results</span>
             </a>
             <div id="collapseResults" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -165,7 +178,7 @@
                                 <p class="noindent" >Furthermore, the rise of the digital economy provides new opportunities to collect data about consumer preferences and use them
                                     to influence purchasing habits. Seeing potential revenue gains, a number of companies have invested time and money into
                                     improving their recommender systems, mostly famously in 2006, when Netflix put up a $1 million USD prize for the team that
-                                    proposed the best method for improving their predictions of how a user would rate a given film [3]. Recommender systems
+                                    proposed the best method for improving their predictions of how a user would rate a given film <sup>[3]</sup>. Recommender systems
                                     therefore remain an active area of research. The current literature on these systems focuses on a number of key
                                     areas.
                                 <p class="noindent" >
@@ -178,7 +191,7 @@
                         <div class="card shadow mb-4">
                             <!-- Card Header - Dropdown -->
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Content-Based Recommendations vs. Collaborative Filtering</a></h6>
+                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section2">Content-Based Recommendations vs. Collaborative Filtering</a></h6>
                             </div>
                             <!-- Card Body -->
                             <div class="card-body" class="likesubsectionHead" id="x1-2000">
@@ -191,9 +204,9 @@
                                     <!--l. 29--><p class="noindent" >The content based approach creates a profile for each user or product to characterize its nature. As an example,
                                 a movie profile could include attributes regarding its genre, the participating actors, its box office popularity,
                                 etc. [...] Collaborative Filtering analyzes relationships between users and interdependencies among products,
-                                in order to identify new user-item associations [4].</div>
+                                in order to identify new user-item associations <sup>[4]</sup>.</div>
                                 <!--l. 32--><p class="noindent" >For example, collaborative filtering seeks to identify &#8220;pairs of items that tend to be rated similarly or like-minded users with
-                                similar history of rating or purchasing&#8221; [4].
+                            similar history of rating or purchasing&#8221; <sup>[4]</sup>.
                                 <!--l. 34--><p class="noindent" >Spotify data has been the subject of many recommender system studies. For example, Pérez-Marcos et al. (2018) propose a
                                 method that relies on a Pearson&#8217;s coefficient to suggests songs for a user to listen to based on a comparison of their playback
                                 history with the overall play count across all Spotify users.
@@ -201,7 +214,7 @@
                                 NMF relies on decomposing a matrix of user-item ratings into two factor matrices, one which characterizes users and one which
                                 characterizes items, such that the product of the two factors reconstructs the original matrix with minimal error. This provides a
                                 way of predicting the rating a each user would give to each item. The majority of the leading entries in the Netflix Prize
-                                competition uses some form of ensemble method based on NMF [6].
+                            competition uses some form of ensemble method based on NMF <sup>[6]</sup>.
                                 <!--l. 40--><p class="noindent" >A good music recommendation is about more than the song itself &#8211; it depends on both the individual preferences of the user and
                             the context in which they are listening to the song. We will therefore focus on recommender systems that provide personalized and
                             user-dependent outputs, leading us to favor a collaborative filtering approach. As a baseline, we will also consider a content-based
@@ -212,17 +225,15 @@
                     </div>
                 </div>
 
-
-
                     <div class="col-xl-12">
                         <div class="card shadow mb-4">
                             <!-- Card Header - Dropdown -->
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Explicit vs. Implicit Rating</a></h6>
+                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section3">Explicit vs. Implicit Rating</a></h6>
                             </div>
                             <!-- Card Body -->
                             <div class="card-body" class="likesubsectionHead" id="x1-3000">
-                                <!--l. 46--><p class="noindent" >As pointed out by Hu et al. (2008), user feedback is not always provided explicitly [4]. In some cases, information
+                                <!--l. 46--><p class="noindent" >As pointed out by Hu et al. (2008), user feedback is not always provided explicitly <sup>[4]</sup>. In some cases, information
                                 about a user&#8217;s interest in a particular item can be gleaned from behavioral data collected by an online platform.
                                 For example, Netflix may deduce that a user is not interested in a TV series if they stop watching after the pilot
                                 episode.
@@ -233,10 +244,10 @@
                                 when observed represents a strong or weak preference.
                                 <!--l. 51--><p class="noindent" >In addition to the distinction between implicit and explicit preferences, work on recommender systems also considers situations
                                 with missing or one-sided data. Steck (2010) focuses on methodologies for training and testing recommender systems on data
-                                missing not at random [8]. Verstrepen et al. (2014; 2017) study the problem of making recommendations with
+                                missing not at random <sup>[8]</sup>. Verstrepen et al. (2014; 2017) study the problem of making recommendations with
                                 only positive data, which occurs for example when the data indicates that a user liked a particular item but no
-                                information about when they did not like it (i.e. the model does not distinguish negative and neutral preferences) [9]
-                                [10].
+                                information about when they did not like it (i.e. the model does not distinguish negative and neutral preferences) <sup>[9]
+                                [10]</sup>.
                                 <!--l. 55--><p class="noindent" >One-way data collection is an important consideration for playlist recommendation systems: the fact that a user chose to include a
                                 given song in their playlist is a strong positive signal that the song goes well with the others in the playlist; but the
                                 corresponding negative signals about all the songs that they did <span
@@ -253,16 +264,16 @@
                         <div class="card shadow mb-4">
                             <!-- Card Header - Dropdown -->
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Single vs. Multiple Recommendations</a></h6>
+                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section4">Single vs. Multiple Recommendations</a></h6>
                             </div>
                             <!-- Card Body -->
                             <div class="card-body" class="likesubsectionHead" id="x1-4000">
                                 <!--l. 61--><p class="noindent" >A number of papers have focused on the task of recommending a slate of items rather than an individual item, such as a group of
-                                items that a user may want together [7] [11] [1]. Deshpande et al. (2004) point out that user-based collaborative filtering methods
+                                items that a user may want together <sup>[7] [11] [1]</sup>. Deshpande et al. (2004) point out that user-based collaborative filtering methods
                                 can become extremely computationally intensive as the number of users increase, and suggest alternative approaches focusing
                                 instead on user&#8211;item matrices. They propose a class of &#8220;top-n recommendation&#8221; algorithms that focus on similarities between the
                                 items themselves, and then use user&#8211;item matrices and then uses them to identify the set of items to be recommended&#8221;
-                                [2].
+                                <sup>[2]</sup>.
                                 <!--l. 65--><p class="noindent" >We believe that song recommendations are best characterized as a group of items rather than individual items. We will therefore
                                 pursue an approach that learns from the structure of playlist data to propose groups of songs that pair well together. This enables
                                 recommendations to be context-dependent. For example, a user&#8217;s interest in a particular song may depend on which other
@@ -275,17 +286,17 @@
                     <div class="col-xl-12">
                         <div class="card shadow mb-4">
                             <!-- Card Header - Dropdown -->
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Incorporating User Feedback</a></h6>
-                            </div>
+                            <a name="Section5"><div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Incorporating User Feedback</h6>
+                            </div></a>
                             <!-- Card Body -->
                             <div class="card-body" class="likesubsectionHead" id="x1-5000">
                                 <!--l. 71--><p class="noindent" >The interaction between users and platforms gives rise to a number of interesting feedback loops. Jiang et al (2019) discuss on
-                                feedback loops in recommender systems [5]. Viappiani et al. (2006) propose a framework for eliciting user preferences in web
+                                feedback loops in recommender systems <sup>[5]</sup>. Viappiani et al. (2006) propose a framework for eliciting user preferences in web
                                 searches using a multi-stage process. When users enter a search query, they are presented with initial suggestions. They are then
                                 given options to revise their search in response to these suggestions. The algorithm can take into account both what was previously
                                 known about the user&#8217;s preferences and the new information collected from their response to the suggestions.
-                                [12]
+                                <sup>[12]</sup>
                                 <!--l. 75--><p class="noindent" >In the case of our Spotify recommender system, there is currently no mechanism for soliciting user feedback about our
                                 recommendations. However, feedback loops remain important to keep in mind as they offer a helpful lens for thinking about the
                                 social and temporal dynamics of music preferences, since past recommendations may influence future preferences. For example,
@@ -299,13 +310,13 @@
                         <div class="card shadow mb-4">
                             <!-- Card Header - Dropdown -->
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">References</a></h6>
+                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section6">References</a></h6>
                             </div>
                             <!-- Card Body -->
                             <div class="card-body" class="likesubsectionHead" id="x1-6000">
                                 <!--l. 80--><p class="noindent" >
                                 <dl class="thebibliography"><dt id="X0-Balakrishnan2010" class="thebibliography">
-                                    [1]  </dt><dd
+                                    <sup>[1]</sup>  </dt><dd
                                         id="bib-1" class="thebibliography">
                                     <!--l. 80--><p class="noindent" ><a id="page.3"></a><a
                                     href="lit-review.html" id="X0-" ></a>Suhrid Balakrishnan. &#8220;On-demand set-based recommendations&#8221;. In: <span
@@ -330,7 +341,7 @@
                                         href="http://portal.acm.org/citation.cfm?doid=1864708.1864775" class="url" ><span
                                         class="pcrr7t-x-x-120">http://portal.acm.org/citation.cfm?doid=1864708.1864775</span></a> (visited on 12/11/2019).
                                 </dd><dt id="X0-Deshpande2004" class="thebibliography">
-                                    [2]  </dt><dd
+                                    <sup>[2]</sup>  </dt><dd
                                         id="bib-2" class="thebibliography">
                                     <!--l. 80--><p class="noindent" >Mukund Deshpande and George Karypis. &#8220;Item-based top-N recommendation algorithms&#8221;. In: <span
                                     class="ptmri7t-x-x-120">ACM Transactions</span>
@@ -353,7 +364,7 @@
                                         href="http://portal.acm.org/citation.cfm?doid=963770.963776" class="url" ><span
                                         class="pcrr7t-x-x-120">http://portal.acm.org/citation.cfm?doid=963770.963776</span></a> (visited on 12/11/2019).
                                 </dd><dt id="X0-GomezUribe2015" class="thebibliography">
-                                    [3]  </dt><dd
+                                    <sup>[3]</sup>  </dt><dd
                                         id="bib-3" class="thebibliography">
                                     <!--l. 80--><p class="noindent" >Carlos  A.  Gomez-Uribe  and  Neil  Hunt.  &#8220;The  Netflix  Recommender  System:  Algorithms,  Business  Value,
                                 and  Innovation&#8221;.  In:  <span
@@ -375,7 +386,7 @@
                                         href="http://doi.acm.org/10.1145/2843948" class="url" ><span
                                         class="pcrr7t-x-x-120">http://doi.acm.org/10.1145/2843948</span></a> (visited on 12/11/2019).
                                 </dd><dt id="X0-Hu2008" class="thebibliography">
-                                    [4]  </dt><dd
+                                    <sup>[4]</sup>  </dt><dd
                                         id="bib-4" class="thebibliography">
                                     <!--l. 80--><p class="noindent" >Yifan Hu, Yehuda Koren, and Chris Volinsky. &#8220;Collaborative Filtering for Implicit Feedback Datasets&#8221;. In: <span
                                     class="ptmri7t-x-x-120">2008</span>
@@ -401,7 +412,7 @@
                                         class="pcrr7t-x-x-120">http://ieeexplore.ieee.org/document/4781121/</span></a> (visited on
                                 12/10/2019).
                                 </dd><dt id="X0-Jiang2019" class="thebibliography">
-                                    [5]  </dt><dd
+                                    <sup>[5]</sup>  </dt><dd
                                         id="bib-5" class="thebibliography">
                                     <!--l. 80--><p class="noindent" >Ray  Jiang  et  al.  &#8220;Degenerate  Feedback  Loops  in  Recommender  Systems&#8221;.  In:  <span
                                     class="ptmri7t-x-x-120">Proceedings  of  the  2019</span>
@@ -419,12 +430,12 @@
                                         href="http://arxiv.org/abs/1902.10730" class="url" ><span
                                         class="pcrr7t-x-x-120">http://arxiv.org/abs/1902.10730</span></a> (visited on 12/11/2019).
                                 </dd><dt id="X0-Koren2009" class="thebibliography">
-                                    [6]  </dt><dd
+                                    <sup>[6]</sup>  </dt><dd
                                         id="bib-6" class="thebibliography">
                                     <!--l. 80--><p class="noindent" >Yehuda Koren. &#8220;The BellKor Solution to the Netflix Grand Prize&#8221;. In: <span
                                     class="ptmri7t-x-x-120">Netflix Prize </span>(Aug. 2009), p. 10.
                                 </dd><dt id="X0-Linden2003" class="thebibliography">
-                                    [7]  </dt><dd
+                                    <sup>[7]</sup>  </dt><dd
                                         id="bib-7" class="thebibliography">
                                     <!--l. 80--><p class="noindent" >G.  Linden,  B.  Smith,  and  J.  York.  &#8220;Amazon.com  recommendations:  item-to-item  collaborative  filtering&#8221;.  In:
                                 <span
@@ -446,7 +457,7 @@
                                         href="http://ieeexplore.ieee.org/document/1167344/" class="url" ><span
                                         class="pcrr7t-x-x-120">http://ieeexplore.ieee.org/document/1167344/</span></a> (visited on 12/11/2019).
                                 </dd><dt id="X0-Steck2010" class="thebibliography">
-                                    [8]  </dt><dd
+                                    <sup>[8]</sup>  </dt><dd
                                         id="bib-8" class="thebibliography">
                                     <!--l. 80--><p class="noindent" >Harald Steck. &#8220;Training and Testing of Recommender Systems on Data Missing Not at Random&#8221;. In: <span
                                     class="ptmri7t-x-x-120">Proceedings</span>
@@ -470,7 +481,7 @@
                                         href="http://doi.acm.org/10.1145/1835804.1835895" class="url" ><span
                                         class="pcrr7t-x-x-120">http://doi.acm.org/10.1145/1835804.1835895</span></a>.
                                 </dd><dt id="X0-Verstrepen2014" class="thebibliography">
-                                    [9]  </dt><dd
+                                    <sup>[9]</sup>  </dt><dd
                                         id="bib-9" class="thebibliography">
                                     <!--l. 80--><p class="noindent" >Koen Verstrepen and Bart Goethals. &#8220;Unifying Nearest Neighbors Collaborative Filtering&#8221;. In: <span
                                     class="ptmri7t-x-x-120">Proceedings of the</span>
@@ -494,7 +505,7 @@
                                         href="http://doi.acm.org/10.1145/2645710.2645731" class="url" ><span
                                         class="pcrr7t-x-x-120">http://doi.acm.org/10.1145/2645710.2645731</span></a> (visited on 12/11/2019).
                                 </dd><dt id="X0-Verstrepen2017" class="thebibliography">
-                                    [10]  </dt><dd
+                                    <sup>[10]</sup>  </dt><dd
                                         id="bib-10" class="thebibliography">
                                     <!--l. 80--><p class="noindent" >Koen       Verstrepen       et       al.       &#8220;Collaborative       Filtering       for       Binary,       Positiveonly       Data&#8221;.
                                 In: <span
@@ -516,7 +527,7 @@
                                         href="http://doi.acm.org/10.1145/3137597.3137599" class="url" ><span
                                         class="pcrr7t-x-x-120">http://doi.acm.org/10.1145/3137597.3137599</span></a> (visited on 12/11/2019).
                                 </dd><dt id="X0-Viappiani2010" class="thebibliography">
-                                    [11]  </dt><dd
+                                    <sup>[11]</sup>  </dt><dd
                                         id="bib-11" class="thebibliography">
                                     <!--l. 80--><p class="noindent" >Paolo  Viappiani  and  Craig  Boutilier.  &#8220;Optimal  Bayesian  Recommendation  Sets  and  Myopically  Optimal
                                 Choice  Query  Sets&#8221;.  In:  <span
@@ -532,7 +543,7 @@
                                         class="pcrr7t-x-x-120">http://dl.acm.org/citation.cfm?id=2997046.2997158</span></a> (visited on
                                 12/11/2019).
                                 </dd><dt id="X0-Viappiani2006" class="thebibliography">
-                                    [12]  </dt><dd
+                                    <sup>[12]</sup>  </dt><dd
                                         id="bib-12" class="thebibliography">
                                     <!--l. 80--><p class="noindent" >Paolo   Viappiani   and   Boi   Faltings.   &#8220;Implementing   Example-based   Tools   for   Preference-based   Search&#8221;.
                                 In:   <span
