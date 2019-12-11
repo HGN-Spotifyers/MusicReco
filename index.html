@@ -3,123 +3,157 @@
 
 <head>
 
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-  <title>Spotify Project - AC209A</title>
+    <title>Spotify Project - AC209A</title>
 
-  <!-- Custom fonts for this template-->
-  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML"></script>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
 
-  <!-- Custom styles for this template-->
-  <link href="css/sb-admin-2.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/jupyter.css">
+    <script src="vendor/jquery/jquery.js"></script>
+    <script>
+        $(function(){
+            $("#includedContent").load("TestNBbare.html");
+        });
+    </script>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+
+    <link rel="stylesheet" href="css/sb-admin-2.min.css" >
+    <link rel="stylesheet" href="css/style.css">
 
 </head>
 
 <body id="page-top">
 
-  <!-- Page Wrapper -->
-  <div id="wrapper">
+<!-- Page Wrapper -->
+<div id="wrapper">
 
     <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-      <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-        <div class="sidebar-brand-icon rotate-n-15">
-          <i class="fab fa-spotify"></i>
-        </div>
-        <div class="sidebar-brand-text mx-3">HGN Spotifyers</div>
-      </a>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider my-0">
-
-      <!-- Nav Item - Dashboard -->
-      <li class="nav-item active">
-        <a class="nav-link" href="index.html">
-          <i class="fas fa-home"></i>
-          <span>Home</span></a>
-      </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      <!-- Heading -->
-      <div class="sidebar-heading">
-        Pages
-      </div>
-
-      <!-- Nav Item - Pages Collapse Menu -->
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEDA" aria-expanded="true" aria-controls="collapseEDA">
-          <i class="fas fa-fw fa-cog"></i>
-          <span>EDA</span>
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <div class="sidebar-brand-icon rotate-n-15">
+                <i class="fab fa-spotify"></i>
+            </div>
+            <div class="sidebar-brand-text mx-3">HGN Spotifyers</div>
         </a>
-        <div id="collapseEDA" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">EDA Sections:</h6>
-            <a class="collapse-item" href="EDA.html">Main</a>
-            <a class="collapse-item" href="EDA.html#Section1">Section1</a>
-            <a class="collapse-item" href="EDA.html#Section2">Section2</a>
-          </div>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item active">
+            <a class="nav-link" href="index.html">
+                <i class="fas fa-home"></i>
+                <span>Home</span></a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Sections
         </div>
-      </li>
 
-      <!-- Nav Item - Utilities Collapse Menu -->
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseModels" aria-expanded="true" aria-controls="collapseModels">
-          <i class="fas fa-fw fa-cog"></i>
-          <span>Models</span>
-        </a>
-        <div id="collapseModels" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Models Sections:</h6>
-            <a class="collapse-item" href="Models.html">Main</a>
-            <a class="collapse-item" href="Models.html#Section1">Section1</a>
-            <a class="collapse-item" href="Models.html#Section2">Section2</a>
-          </div>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="Intro.html">
+                <i class="fas fa-fw fa-wrench"></i>
+                <span>Intro</span>
+            </a>
+        </li>
+        <!-- Nav Item - Utilities Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="LitReview.html">
+                <i class="fas fa-fw fa-wrench"></i>
+                <span>Lit Review</span>
+            </a>
+        </li>
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEDA" aria-expanded="true" aria-controls="collapseEDA">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>EDA</span>
+            </a>
+            <div id="collapseEDA" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">EDA Sections:</h6>
+                    <a class="collapse-item" href="EDA.html">Main</a>
+                    <a class="collapse-item" href="EDA.html#Section1">Section1</a>
+                    <a class="collapse-item" href="EDA.html#Section2">Section2</a>
+                </div>
+            </div>
+        </li>
+
+        <!-- Nav Item - Utilities Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseModels" aria-expanded="true" aria-controls="collapseModels">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Models</span>
+            </a>
+            <div id="collapseModels" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Models Sections:</h6>
+                    <a class="collapse-item" href="Models.html">Main</a>
+                    <a class="collapse-item" href="Models.html#Section1">Section1</a>
+                    <a class="collapse-item" href="Models.html#Section2">Section2</a>
+                </div>
+            </div>
+        </li>
+
+        <!-- Nav Item - Utilities Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseResults" aria-expanded="true" aria-controls="collapseResults">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Results</span>
+            </a>
+            <div id="collapseResults" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Results Sections:</h6>
+                    <a class="collapse-item" href="Results.html">Main</a>
+                    <a class="collapse-item" href="Results.html#Section1">Section1</a>
+                    <a class="collapse-item" href="Results.html#Section2">Section2</a>
+                </div>
+            </div>
+        </li>
+
+
+
+
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
         </div>
-      </li>
-
-      <!-- Nav Item - Utilities Collapse Menu -->
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseResults" aria-expanded="true" aria-controls="collapseResults">
-          <i class="fas fa-fw fa-cog"></i>
-          <span>Results</span>
-        </a>
-        <div id="collapseResults" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Results Sections:</h6>
-            <a class="collapse-item" href="Results.html">Main</a>
-            <a class="collapse-item" href="Results.html#Section1">Section1</a>
-            <a class="collapse-item" href="Results.html#Section2">Section2</a>
-          </div>
-        </div>
-      </li>
-
-      <!-- Nav Item - Utilities Collapse Menu -->
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="Sources.html">
-          <i class="fas fa-fw fa-wrench"></i>
-          <span>Sources</span>
-        </a>
-      </li>
-
-
-
-      <!-- Divider -->
-      <hr class="sidebar-divider d-none d-md-block">
-
-      <!-- Sidebar Toggler (Sidebar) -->
-      <div class="text-center d-none d-md-inline">
-        <button class="rounded-circle border-0" id="sidebarToggle"></button>
-      </div>
 
     </ul>
     <!-- End of Sidebar -->
@@ -127,101 +161,125 @@
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
 
-      <!-- Main Content -->
-      <div id="content">
+        <!-- Main Content -->
+        <div id="content">
 
 
 
-        <!-- Begin Page Content -->
-        <div class="container-fluid">
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
 
-          <!-- Page Heading -->
-          <div class="d-sm-flex align-items-center justify-content-between mb-4 mytitle">
-            <h1 class="h3 mb-0 text-gray-800">Spotify Project</h1>
-          </div>
-
-
-          <div class="row">
-
-            <!-- Area Chart -->
-            <div class="col-xl-12">
-              <div class="card shadow mb-4">
-                <!-- Card Header - Dropdown -->
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Introduction</h6>
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4 mytitle">
+                    <h1 class="h3 mb-0 text-gray-800">Home</h1>
                 </div>
-                <!-- Card Body -->
-                <div class="card-body">
-                  <p>
-                    Intro Here
-                  </p>
+
+
+                <div class="row">
+
+                    <!-- Area Chart -->
+                    <div class="col-xl-12">
+                        <div class="card shadow mb-4">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Introduction</a></h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+<!--                                <div id="includedContent"></div>-->
+                                <p>
+
+                                    <br><br>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-12">
+                        <div class="card shadow mb-4">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section2">Problem Statement & Motivation</a></h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <p>
+                                Problem Statement & Motivation
+                                With the rise of streaming services over the past decade, the way we find and consume content has drastically changed.
+                                Whereas once content (such as music or movies) may have been found through word of mouth or read about in a magazine,
+                                there are now entire companies whose business revolves around both curating and providing content. Netflix for example
+                                had a net revenue of over \$15.79bn<sup><a href="https://www.statista.com/statistics/272545/annual-revenue-of-netflix/">[1]</a>
+                                </sup>providing just under 150 million subscribers with a near endless stream of TV and Movies.
+                                Similarly Spotify generated a revenue of $5.77bn dollars<sup><a href="https://www.statista.com/statistics/244990/spotifys-revenue-and-net-income/">[2]</a>
+                                </sup> providing their customers with songs and playlists to listen to.
+                                These giants have disrupted the market and fundamentally changed media consumption from a buy to keep framework, to one dominated
+                                by the ability to stream from a countless database of content.
+                                <br><br>
+                                With this new streaming landscape, and especially with the recent rise of competitors (HBO Now, Disney+, Hulu etc. in the video space
+                                and Apple Music, Tidal etc. in the music space), both incumbent market leaders and challengers alike are in an arms race to court
+                                customers and to keep them. What good is an endless void of music or movies if a user is unable to find or successfully filter through
+                                the mass to find what they want? Having great content is just the start of these services, keeping their users engaged is the true battleground.
+                                As users are becoming more accustomed to their streams, they are also beginning to question the satisfaction of endless recommendations
+                                which they feel lacks personality<sup><a href="https://blog.usejournal.com/music-streaming-services-are-gaslighting-us-d782fe44072f">[3]</a></sup>.
+                                Music recommendation specifically has the ability to feel homogeneous and stale creating a feeling of disconnect with the users.
+                                <br><br>
+                                This is one of the great issues in music streaming - how to recommend songs in a way that is not just the latest popular tunes, or
+                                something from a genre that has been listened to before, but a truly personal experience where the music is new, varied and interesting
+                                and yet still caters to the tastes of the individual user.
+                                <br><br>
+                                In this report we focus on music streaming (specifically for Spotify data) and detail our approach to this problem, the current state of recommendation systems as they stand and how we believe the issue of homogeneity and personalization can be improved upon. We focus on both the recommendation of new songs to a user to extend a prespecified playlist and also a cold start problem where the user provides just a small sample of songs as a starting point to then generate a full playlist.
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+
+
                 </div>
-              </div>
+
+
+
             </div>
+            <!-- End of Main Content -->
 
-          </div>
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; HGN 2019</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
 
-
-
-      </div>
-      <!-- End of Main Content -->
-
-      <!-- Footer -->
-      <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
-            <span>Copyright &copy; HGN 2019</span>
-          </div>
         </div>
-      </footer>
-      <!-- End of Footer -->
+        <!-- End of Content Wrapper -->
 
     </div>
-    <!-- End of Content Wrapper -->
+    <!-- End of Page Wrapper -->
 
-  </div>
-  <!-- End of Page Wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
-  <!-- Scroll to Top Button-->
-  <a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-  </a>
 
-  <!-- Logout Modal-->
-  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
-        </div>
-        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
-        </div>
-      </div>
-    </div>
-  </div>
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Bootstrap core JavaScript-->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Core plugin JavaScript-->
-  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-  <!-- Custom scripts for all pages-->
-  <script src="js/sb-admin-2.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
 
-  <!-- Page level plugins -->
-  <script src="vendor/chart.js/Chart.min.js"></script>
+    <!-- Page level plugins -->
+    <script src="vendor/chart.js/Chart.min.js"></script>
 
-  <!-- Page level custom scripts -->
-  <script src="js/demo/chart-area-demo.js"></script>
-  <script src="js/demo/chart-pie-demo.js"></script>
+    <!-- Page level custom scripts -->
+    <script src="js/demo/chart-area-demo.js"></script>
+    <script src="js/demo/chart-pie-demo.js"></script>
 
 </body>
 

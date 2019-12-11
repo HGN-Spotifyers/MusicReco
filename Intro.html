@@ -52,9 +52,22 @@
 
     <!-- Heading -->
     <div class="sidebar-heading">
-      Pages
+      Sections
     </div>
 
+    <li class="nav-item active">
+      <a class="nav-link collapsed" href="Intro.html">
+        <i class="fas fa-fw fa-wrench"></i>
+        <span>Intro</span>
+      </a>
+    </li>
+    <!-- Nav Item - Utilities Collapse Menu -->
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="LitReview.html">
+        <i class="fas fa-fw fa-wrench"></i>
+        <span>Lit Review</span>
+      </a>
+    </li>
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
       <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEDA" aria-expanded="true" aria-controls="collapseEDA">
@@ -103,13 +116,6 @@
       </div>
     </li>
 
-    <!-- Nav Item - Utilities Collapse Menu -->
-    <li class="nav-item active">
-      <a class="nav-link collapsed" href="Sources.html">
-        <i class="fas fa-fw fa-wrench"></i>
-        <span>Sources</span>
-      </a>
-    </li>
 
 
 
@@ -137,7 +143,7 @@
 
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4 mytitle">
-          <h1 class="h3 mb-0 text-gray-800">Sources</h1>
+          <h1 class="h3 mb-0 text-gray-800">Introduction</h1>
         </div>
 
 
@@ -148,15 +154,42 @@
             <div class="card shadow mb-4">
               <!-- Card Header - Dropdown -->
               <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Sources</a></h6>
+                <h6 class="m-0 font-weight-bold text-primary"><a name="Section2">Introduction & Description of Data</a></h6>
               </div>
               <!-- Card Body -->
               <div class="card-body">
                 <p>
-                  Section 1 Here
-                  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                  Given that content recommendation systems are becoming a big issue for the users and also for the
+                  companies who provide these services (Netflix paid out $1,000,000 in prize money for the winners of
+                  the Netflix competition<sup><a href="https://www.kaggle.com/netflix-inc/netflix-prize-data">[4]</a>
+                </sup>) there is scope to delve into this field and be the ones to make the next
+                  big leap forward. Personally we’ve also experienced the lackluster feeling when Spotify recommendations
+                  become monotonous and strongly feel like this field could benefit from something more human and varied.
+                  <br> <br>
+                  In this report we investigate the million playlist dataset, provided by Spotify, containing a collection
+                  of one million user generated playlists and the collection of songs within them. Our aim is to use this
+                  data to generate an automatic recommendation system, one which can be given any collection of songs as
+                  a “seed playlist” and then generate a series of recommendations (potentially near infinite although
+                  theoretically limited by number of unique songs) to be added to this playlist. This approach is designed
+                  to be scalable - want to create a brand new 100 song playlist from three songs? - specify a three song seed
+                  and request the top 100 recommendations. Wish to add a few new songs to an existing 50 song playlist? - the
+                  approach is the same. In a sense we’ve tried to combine both the cold start and playlist continuation into
+                  a single framework - given a series of songs of an arbitrary length, what are the n most relevant songs.
+                  <br> <br>
+                  This however brings up the concept of relevance - what is a relevant song for a playlist? Within the genre
+                  of recommender systems we wish to push our system beyond the simple mathematical representation of songs
+                  (the “characteristics” which can be described through the frequencies of the waveform such as tempo, pitch
+                  and key). Whilst useful metrics of song similarity in some situations (see ordering later on in this paper)
+                  these metrics cannot fully capture what makes a playlist a playlist. Our theoretical assumption is that playlists
+                  are uniquely human, that they are more than just a collection of similar songs by some simple metrics but are
+                  instead a hidden narrative. A simple example of this would be a Christmas playlist - whilst they all share a
+                  common theme (lyrics about snow and Santa) they are musically diverse spanning classical, pop, rock, country
+                  and a whole host of other genres and styles. In order to replicate this sort of diversity it is vital for us
+                  to generate an understanding of this “hidden dimension” of the data.
+
                 </p>
               </div>
+
             </div>
           </div>
 
