@@ -29,3 +29,11 @@ img {
 .cardimage{
     text-align: center;
 }
+
+.includedContent .inner_cell{
+    font-size: 0.95rem;
+}
+
+.includedContent .input_area{
+    font-size: 0.7rem;
+}
