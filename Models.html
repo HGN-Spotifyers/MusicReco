@@ -49,10 +49,16 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
+    <li class="nav-item">
       <a class="nav-link" href="index.html">
         <i class="fas fa-home"></i>
         <span>Home</span></a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" href="About.html" style="padding-top: 0px">
+        <i class="fas fa-users"></i>
+        <span>About</span></a>
     </li>
 
     <!-- Divider -->
@@ -121,7 +127,7 @@
       </a>
       <div id="collapseModels" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-          <h6 class="collapse-header">Models Sections:</h6>
+          <h6 class="collapse-header">Models Pages:</h6>
           <a class="collapse-item active" href="Models.html">Methods</a>
           <a class="collapse-item" href="Models-Baseline.html">Baseline</a>
           <a class="collapse-item" href="Models-PCA.html">PCA</a>
@@ -190,7 +196,38 @@
               </div>
               <!-- Card Body -->
               <div class="card-body">
-                here
+                Our proposal is to develop a model which can predict songs in a more human manner. Reviewing the
+                literature for recommender systems uncovered collaborative filtering as a methodology for representing
+                user preferences and incorporating the human feedback elements into a model. Non-negative Matrix
+                Factorization (NMF) is one known method for performing this type of collaborative filtering but any
+                form of decomposition on the song-playlist space (such as PCA) could also be used to incorporate user
+                feedback elements. To test our hypothesis that modelling based on implicit user preferences will
+                outperform one based on attributes alone, we will build and test the following models and also propose
+                an innovative method for song ordering and selection when a
+                pool of valid songs has been found by one of the models. <br><br>
+                <ol>
+                  <li>Baseline attribute only model</li><br>
+                  <li>Collaborative filtering - PCA approach</li><br>
+                  <li>NMF model
+                  <ul>
+                    <li>Understanding - Toy Example</li>
+                    <li>Optimization - Parameter Validation</li>
+                  </ul>
+                  </li><br>
+                  <li>Song Smoothing</li>
+                </ol>
+
+
+
+
+
+
+
+
+
+
+
+
               </div>
             </div>
           </div>

@@ -13,33 +13,20 @@
 
     <link rel='icon' href='img/favicon.ico' type='image/x-icon'/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML"></script>
-    <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            processEscapes: true,
-            processEnvironments: true
-        },
-        // Center justify equations in code and markdown cells. Elsewhere
-        // we use CSS to left justify single line equations in code cells.
-        displayAlign: 'center',
-        "HTML-CSS": {
-            styles: {'.MathJax_Display': {"margin": 0}},
-            linebreaks: { automatic: true }
-        }
-    });
-    </script>
 
     <link rel="stylesheet" href="css/jupyter.css">
 
     <script src="vendor/jquery/jquery.js"></script>
-
+    <script>
+        $(function(){
+        });
+    </script>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans&display=swap" rel="stylesheet">
+
     <!-- Custom styles for this template-->
 
     <link rel="stylesheet" href="css/sb-admin-2.min.css" >
@@ -67,13 +54,13 @@
         <hr class="sidebar-divider my-0">
 
         <!-- Nav Item - Dashboard -->
-        <li class="nav-item active">
+        <li class="nav-item">
             <a class="nav-link" href="index.html">
                 <i class="fas fa-home"></i>
                 <span>Home</span></a>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item active">
             <a class="nav-link" href="About.html" style="padding-top: 0px">
                 <i class="fas fa-users"></i>
                 <span>About</span></a>
@@ -199,7 +186,7 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4 mytitle">
-                    <h1 class="h3 mb-0 text-gray-800">Home</h1>
+
                 </div>
 
 
@@ -211,35 +198,15 @@
                         <div class="card shadow mb-4">
                             <!-- Card Header - Dropdown -->
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section2">Problem Statement & Motivation</a></h6>
+                                <h6 class="m-0 font-weight-bold text-primary"><a name="Section">About</a></h6>
                             </div>
                             <!-- Card Body -->
                             <div class="card-body">
-                                <p>
-                                With the rise of streaming services over the past decade, the way we find and consume content has drastically changed.
-                                Whereas once content (such as music or movies) may have been found through word of mouth or read about in a magazine,
-                                there are now entire companies whose business revolves around both curating and providing content. Netflix for example
-                                had a net revenue of over \$15.79bn<sup><a href="https://www.statista.com/statistics/272545/annual-revenue-of-netflix/">[1]</a>
-                                </sup>providing just under 150 million subscribers with a near endless stream of TV and Movies.
-                                Similarly Spotify generated a revenue of $5.77bn dollars<sup><a href="https://www.statista.com/statistics/244990/spotifys-revenue-and-net-income/">[2]</a>
-                                </sup> providing their customers with songs and playlists to listen to.
-                                These giants have disrupted the market and fundamentally changed media consumption from a buy to keep framework, to one dominated
-                                by the ability to stream from a countless database of content.
-                                <br><br>
-                                With this new streaming landscape, and especially with the recent rise of competitors (HBO Now, Disney+, Hulu etc. in the video space
-                                and Apple Music, Tidal etc. in the music space), both incumbent market leaders and challengers alike are in an arms race to court
-                                customers and to keep them. What good is an endless void of music or movies if a user is unable to find or successfully filter through
-                                the mass to find what they want? Having great content is just the start of these services, keeping their users engaged is the true battleground.
-                                As users are becoming more accustomed to their streams, they are also beginning to question the satisfaction of endless recommendations
-                                which they feel lacks personality<sup><a href="https://blog.usejournal.com/music-streaming-services-are-gaslighting-us-d782fe44072f">[3]</a></sup>.
-                                Music recommendation specifically has the ability to feel homogeneous and stale creating a feeling of disconnect with the users.
-                                <br><br>
-                                This is one of the great issues in music streaming - how to recommend songs in a way that is not just the latest popular tunes, or
-                                something from a genre that has been listened to before, but a truly personal experience where the music is new, varied and interesting
-                                and yet still caters to the tastes of the individual user.
-                                <br><br>
-                                In this report we focus on music streaming (specifically for Spotify data) and detail our approach to this problem, the current state of recommendation systems as they stand and how we believe the issue of homogeneity and personalization can be improved upon. We focus on both the recommendation of new songs to a user to extend a prespecified playlist and also a cold start problem where the user provides just a small sample of songs as a starting point to then generate a full playlist.
-                                </p>
+                                <h3>CS209A Final Project Fall 2019</h3>
+                                <h4>Harvard University MS Data Science</h4><br><br>
+                                <h5>Gabriel Pestre  <a href="https://github.com/gpestre"><i class="fab fa-github"></i></a> <a href="https://www.linkedin.com/in/gabrielpestre/"><i class="fab fa-linkedin"></i></a><br><br>
+                                    Hayden Sansum  <a href="https://github.com/haydensansum"><i class="fab fa-github"></i></a> <a href="https://www.linkedin.com/in/haydensansum/"><i class="fab fa-linkedin"></i></a> <a href="https://open.spotify.com/user/hyadne?si=61Qo90Z8QeSyCT0Wk5leRw"><i class="fab fa-spotify"></i></a><br><br>
+                                    Nikhil Vanderklaauw  <a href="https://github.com/nikhilvdk/"><i class="fab fa-github"></i></a> <a href="https://www.linkedin.com/in/nikhilvdk/"><i class="fab fa-linkedin"></i></a> <a href="https://open.spotify.com/user/12925718?si=IxX2LP_ZQGeGdo_Lue7DxA"><i class="fab fa-spotify"></i></a></h5>
                             </div>
 
                         </div>

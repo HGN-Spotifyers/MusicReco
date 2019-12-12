@@ -24,8 +24,7 @@
   <script src="vendor/jquery/jquery.min.js"></script>
   <script>
     $(function(){
-      $("#smoothingNotebook").load("jupyter_nbs/website_song_ordering_model.html");
-      $("#matfacNotebook").load("jupyter_nbs/website_matrix_factorization_optimization.html");
+      $("#nmfDemo").load("jupyter_nbs/website_matrix_factorization_demo.html");
     });
   </script>
 
@@ -51,10 +50,16 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
+    <li class="nav-item">
       <a class="nav-link" href="index.html">
         <i class="fas fa-home"></i>
         <span>Home</span></a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" href="About.html" style="padding-top: 0px">
+        <i class="fas fa-users"></i>
+        <span>About</span></a>
     </li>
 
     <!-- Divider -->
@@ -123,7 +128,7 @@
       </a>
       <div id="collapseModels" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-          <h6 class="collapse-header">Models Sections:</h6>
+          <h6 class="collapse-header">Models Pages:</h6>
           <a class="collapse-item" href="Models.html">Methods</a>
           <a class="collapse-item" href="Models-Baseline.html">Baseline</a>
           <a class="collapse-item" href="Models-PCA.html">PCA</a>
@@ -192,7 +197,7 @@
               </div>
               <!-- Card Body -->
               <div class="card-body">
-                HERE
+                <div class="includedContent", id="nmfDemo"></div>
               </div>
             </div>
           </div>

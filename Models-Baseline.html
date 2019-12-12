@@ -50,11 +50,17 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
+    <li class="nav-item">
       <a class="nav-link" href="index.html">
         <i class="fas fa-home"></i>
         <span>Home</span></a>
     </li>
+
+	  <li class="nav-item">
+		  <a class="nav-link" href="About.html" style="padding-top: 0px">
+			  <i class="fas fa-users"></i>
+			  <span>About</span></a>
+	  </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider">
@@ -122,7 +128,7 @@
       </a>
       <div id="collapseModels" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-          <h6 class="collapse-header">Models Sections:</h6>
+          <h6 class="collapse-header">Models Pages:</h6>
           <a class="collapse-item" href="Models.html">Methods</a>
           <a class="collapse-item active" href="Models-Baseline.html">Baseline</a>
           <a class="collapse-item" href="Models-PCA.html">PCA</a>
@@ -191,7 +197,35 @@
               </div>
               <!-- Card Body -->
               <div class="card-body">
-                Here
+                To understand whether the collaborative filtering approaches based on user generates playlists are
+                effective, a baseline model which does not take into account this data is required. The baseline model
+                will therefore be purely based on the song attribute data and hence, if our theory is correct, provide
+                recommendations which perform <b>poorly</b> when matched with what a human would choose to put on a playlist.
+                <br><br>
+                For song recommendations this baseline model will first perform <a href="EDA.html#Section3">PCA on the song characteristics space</a> down to
+                5 components (from the 11 attributes) as this should reduce sparsity and ensure that individual songs
+                are closer together in terms of attributes.
+                <br><br>
+                As a test example (see below), given a playlist with three songs the prediction process is as follows:
+                <ol>
+                  <li>Locate each song from the given playlist in PC space (highlighted as the X points on the graph)</li>
+                  <li>Find the closest n (in this case 5) neighbours to this point using a nearest neighbour algorithm
+                  (including or excluding the current point)</li>
+                  <li>Create a pool of suggested songs with all those songs found from the previous step (15 total non-blue dots, there are 2 that are double counted).</li>
+                  <li>Remove songs which are already on the playlist - resulting in 12 song suggestions</li>
+                  <li>Deduplicate and count, as there can be overlap in terms of the neighbouring songs, calculate
+                    how many times each song appears. Here there are 2 counted twice so we have 10 unique.</li>
+                  <li>Recommend songs based on which ones have the highest count</li>
+                </ol>
+                <div class="cardimage">
+                  <img src="img/baseline_model_ex.png" alt="baselinemodel" width="60%">
+                </div><br>
+                In this example above, each of the seeds songs returns the closest neighbours, coloured red, orange or
+                green respectively. There are two songs which overlap, one appears in both the song-1-song-2 neighborhood
+                and the other appears in the song-2-song-3 neighborhood (hence those songs coloured twice). Removing the
+                original three songs from the suggestions leaves 10 unique recommended songs. Two are which are ranked
+                higher and so would be suggested first. The remaining are suggested in a random order.
+
               </div>
             </div>
           </div>
