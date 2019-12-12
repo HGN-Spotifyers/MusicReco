@@ -1,0 +1,1348 @@
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Model-Comparisons">Model Comparisons<a class="anchor-link" href="#Model-Comparisons">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The table below contains the resulting scores for each model predicting on the randomly selected test playlists with each of the three different metrics. It is clear that classification accuracy is not a reliable metric for scoring, the values are far too low and hence slight random perturbations (predicting one more exactly correct song) could have too great an effect on the score. Both distance to the held out song’s centroid and distance to the playlist centroid provide comparable scores.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rs</span> <span class="o">=</span> <span class="mi">109</span>
+
+<span class="c1"># Train/test split:</span>
+<span class="n">all_data</span> <span class="o">=</span> <span class="n">DataStorage</span><span class="p">(</span><span class="n">track_playlists</span><span class="o">=</span><span class="n">TRACK_PLAYLISTS</span><span class="p">,</span><span class="n">track_info</span><span class="o">=</span><span class="n">TRACK_INFO</span><span class="p">,</span><span class="n">track_attributes</span><span class="o">=</span><span class="n">TRACK_ATTRIBUTES</span><span class="p">)</span>
+<span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span> <span class="o">=</span> <span class="n">all_data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">train_pct</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="n">rs</span><span class="p">)</span>
+
+<span class="c1"># Build models:</span>
+<span class="n">metrics_pca_model</span> <span class="o">=</span> <span class="n">PCAModel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">train_data</span><span class="p">,</span><span class="n">n_components</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s2">&quot;metrics&quot;</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="n">rs</span><span class="p">)</span>
+<span class="n">plists_pca_model</span> <span class="o">=</span> <span class="n">PCAModel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">train_data</span><span class="p">,</span><span class="n">n_components</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s2">&quot;plists&quot;</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="n">rs</span><span class="p">)</span>
+<span class="n">plists_nmf_model</span> <span class="o">=</span> <span class="n">NMFModel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">train_data</span><span class="p">,</span><span class="n">n_components</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="n">rs</span><span class="p">)</span>
+
+<span class="c1"># Store models in dict:</span>
+<span class="n">model_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;metrics_pca_model&#39;</span> <span class="p">:</span> <span class="n">metrics_pca_model</span><span class="p">,</span>
+    <span class="s1">&#39;plists_pca_model&#39;</span> <span class="p">:</span> <span class="n">plists_pca_model</span><span class="p">,</span>
+    <span class="s1">&#39;plists_nmf_model&#39;</span> <span class="p">:</span> <span class="n">plists_nmf_model</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Perform PCA on all song metrics (for scoring):</span>
+<span class="n">songspace</span> <span class="o">=</span> <span class="n">PCAModel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">all_data</span><span class="p">,</span><span class="n">n_components</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s2">&quot;metrics&quot;</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="n">rs</span><span class="p">)</span><span class="o">.</span><span class="n">pcs</span>
+
+<span class="c1"># Automate model comparison:</span>
+<span class="n">scorer</span> <span class="o">=</span> <span class="n">ScoringMetrics</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">scorer</span><span class="o">.</span><span class="n">automate</span><span class="p">(</span>
+    <span class="n">model_dict</span> <span class="o">=</span> <span class="n">model_dict</span><span class="p">,</span>
+    <span class="n">plist_df</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">track_playlists</span><span class="p">,</span>
+    <span class="n">pcs_metrics</span> <span class="o">=</span> <span class="n">songspace</span><span class="p">,</span>
+    <span class="n">val_pct</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="n">rs</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">comparison</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;model_id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">comparison</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>WARNING : Dropping playlist plist:010:136 (0 suggestions).
+Warning : Different lengths in classifcation accuracy: 13 and 11 .
+WARNING : Dropping playlist plist:123:849 (0 suggestions).
+Warning : Different lengths in classifcation accuracy: 17 and 11 .
+WARNING : Dropping playlist plist:272:308 (0 suggestions).
+WARNING : Dropping playlist plist:295:443 (0 suggestions).
+WARNING : Dropping playlist plist:524:539 (0 suggestions).
+Warning : Different lengths in classifcation accuracy: 12 and 11 .
+WARNING : Dropping playlist plist:897:438 (0 suggestions).
+WARNING : Dropping playlist plist:976:698 (0 suggestions).
+WARNING : Dropping playlist plist:990:371 (0 suggestions).
+Warning : Different lengths in classifcation accuracy: 14 and 11 .
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>class_acc</th>
+      <th>dist_sugg_hold</th>
+      <th>dist_sugg_play</th>
+    </tr>
+    <tr>
+      <th>model_id</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>metrics_pca_model</td>
+      <td>0.000557</td>
+      <td>15.828320</td>
+      <td>9.895357</td>
+    </tr>
+    <tr>
+      <td>plists_nmf_model</td>
+      <td>0.000641</td>
+      <td>14.691869</td>
+      <td>10.148537</td>
+    </tr>
+    <tr>
+      <td>plists_pca_model</td>
+      <td>0.000217</td>
+      <td>14.394421</td>
+      <td>11.655374</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The NMF model performs best on both the held out song predictions and the classification accuracy whereas the attributes pca model (metrics_pca_model) performs the best at predicting playlist centroid. To understand why this might be the case we plotted the histograms of each of the distances for each of the playlists individually rather than the aggregated mean shown in the table above.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dist_sugg_hold&#39;</span><span class="p">,</span><span class="s1">&#39;dist_sugg_play&#39;</span><span class="p">]</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#0098d8&#39;</span><span class="p">,</span><span class="s1">&#39;#ee8012&#39;</span><span class="p">,</span><span class="s1">&#39;#f43530&#39;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">metric</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metrics</span><span class="p">):</span>
+    <span class="n">fig</span><span class="p">,</span><span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span><span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;metric: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">metric</span><span class="p">),</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">c</span><span class="p">,(</span><span class="n">model_id</span><span class="p">,</span><span class="n">grp</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;model_id&#39;</span><span class="p">])):</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="n">c</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Distance metric (smaller = better)&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Frequency (across test playlists)&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span> <span class="n">grp</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelleft</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span><span class="n">bottom</span><span class="o">=</span><span class="mf">0.10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can see from the histograms above how the two distance metrics varied for the 3 different models. We can see that the metrics pca model (in blue) tended to have the least right skewed spread with more distances at higher values when evaluated with the holdout set metric. This model is followed by the playlist PCA model and then by the NMF model, in terms of highest frequencies at low distances.</p>
+<p>However, the distributions were different when scoring was calculated on the whole playlist. Here, the PCA model on playlist space had a higher frequency of low distances, followed then by nmf and attributes based PCA.</p>
+<p>From these graphs we can see that the NMF model is performing better at predicting more songs which are very close to the centre of the held out songs, indicating that it is performing in the most human-esque manner out of the three models.</p>
+<p>For future testing, it may be interesting to incorporate a measure of variance of the prediction cluster. We may not be able to capture enough information by just optimizing for the average characteristics of either the left out songs or the playlist as a whole. A variance measure would also ensure that the distribution of songs in the prediction more closely matches the variety of those withheld songs or the playlist as whole.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Demo:">Demo:<a class="anchor-link" href="#Demo:">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Generate a seed playlist of Christmas-related songs</span>
+<span class="n">rs</span> <span class="o">=</span> <span class="mi">109</span>
+<span class="n">tracks</span> <span class="o">=</span> <span class="n">all_data</span><span class="o">.</span><span class="n">search_text_fields</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;christmas&#39;</span><span class="p">,</span><span class="n">ignore_case</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">tracks</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="n">rs</span><span class="p">)</span>
+<span class="n">plist_id</span> <span class="o">=</span> <span class="s2">&quot;christmas&quot;</span>
+
+<span class="n">plist_column</span> <span class="o">=</span> <span class="n">all_data</span><span class="o">.</span><span class="n">build_playlist</span><span class="p">(</span><span class="n">tracks</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">plist_id</span><span class="p">)</span>
+
+<span class="c1">#plist_id = &#39;plist:000:491&#39;</span>
+<span class="c1">#plist_id = &#39;plist:245:031&#39;</span>
+<span class="c1">#plist_id = &#39;plist:471:263&#39;</span>
+<span class="c1">#plist_column = TRACK_PLAYLISTS[[plist_id]]</span>
+
+<span class="n">starting_playlist</span> <span class="o">=</span> <span class="n">all_data</span><span class="o">.</span><span class="n">get_track_details</span><span class="p">(</span><span class="n">plist_column</span><span class="p">[</span><span class="n">plist_column</span><span class="p">[</span><span class="n">plist_id</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+<span class="n">knn_metrics_suggestions</span> <span class="o">=</span> <span class="n">metrics_pca_model</span><span class="o">.</span><span class="n">get_suggestions_plist</span><span class="p">(</span><span class="n">plist_column</span><span class="p">,</span><span class="n">n_suggestions</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">warn</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">knn_metrics_suggestions</span> <span class="o">=</span> <span class="n">all_data</span><span class="o">.</span><span class="n">get_track_details</span><span class="p">(</span><span class="n">knn_metrics_suggestions</span><span class="p">)</span>
+
+<span class="n">knn_plists_suggestions</span> <span class="o">=</span> <span class="n">plists_pca_model</span><span class="o">.</span><span class="n">get_suggestions_plist</span><span class="p">(</span><span class="n">plist_column</span><span class="p">,</span><span class="n">n_suggestions</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">warn</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">knn_plists_suggestions</span> <span class="o">=</span> <span class="n">all_data</span><span class="o">.</span><span class="n">get_track_details</span><span class="p">(</span><span class="n">knn_plists_suggestions</span><span class="p">)</span>
+
+<span class="n">nmf_plists_suggestions</span> <span class="o">=</span> <span class="n">plists_nmf_model</span><span class="o">.</span><span class="n">get_suggestions_plist</span><span class="p">(</span><span class="n">plist_column</span><span class="p">,</span><span class="n">n_suggestions</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">warn</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">nmf_plists_suggestions</span> <span class="o">=</span> <span class="n">all_data</span><span class="o">.</span><span class="n">get_track_details</span><span class="p">(</span><span class="n">nmf_plists_suggestions</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Starting playlist:&quot;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">starting_playlist</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Suggested additions (kNN on song-space PCA):&quot;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">knn_metrics_suggestions</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Suggested additions (kNN on playlist-space PCA):&quot;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">knn_plists_suggestions</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Suggested additions (NMF on playlist data):&quot;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">nmf_plists_suggestions</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Warning: Playlist christmas only has 10 tracks.
+Warning: Playlist christmas only has 10 tracks.
+Warning: Playlist christmas only has 10 tracks.
+
+Starting playlist:
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>track_name</th>
+      <th>artist_name</th>
+      <th>album_name</th>
+      <th>duration_ms</th>
+      <th>danceability</th>
+      <th>energy</th>
+      <th>key</th>
+      <th>loudness</th>
+      <th>mode</th>
+      <th>speechiness</th>
+      <th>acousticness</th>
+      <th>instrumentalness</th>
+      <th>liveness</th>
+      <th>valence</th>
+      <th>tempo</th>
+    </tr>
+    <tr>
+      <th>track_uri</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>spotify:track:0RVERV5I1jNVQa0w3KgAtH</td>
+      <td>Hark! the herald angels sing</td>
+      <td>Felix Mendelssohn</td>
+      <td>Classic Christmas Carols</td>
+      <td>250040</td>
+      <td>0.193</td>
+      <td>0.3340</td>
+      <td>7.0</td>
+      <td>-10.580</td>
+      <td>1.0</td>
+      <td>0.0312</td>
+      <td>0.976</td>
+      <td>0.699000</td>
+      <td>0.2180</td>
+      <td>0.1550</td>
+      <td>78.209</td>
+    </tr>
+    <tr>
+      <td>spotify:track:0xE2bQrT9vTrVZUB9ddzi0</td>
+      <td>Christmas Is Coming - Remastered</td>
+      <td>Harry Belafonte</td>
+      <td>To Wish You A Merry Christmas</td>
+      <td>98866</td>
+      <td>0.705</td>
+      <td>0.3430</td>
+      <td>4.0</td>
+      <td>-16.546</td>
+      <td>1.0</td>
+      <td>0.0536</td>
+      <td>0.948</td>
+      <td>0.000000</td>
+      <td>0.3110</td>
+      <td>0.7640</td>
+      <td>126.679</td>
+    </tr>
+    <tr>
+      <td>spotify:track:2M6An7pyyNwEObR7c7uCVp</td>
+      <td>We Fly High</td>
+      <td>Jim Jones</td>
+      <td>A Dipset Christmas</td>
+      <td>266213</td>
+      <td>0.685</td>
+      <td>0.7760</td>
+      <td>1.0</td>
+      <td>-6.491</td>
+      <td>1.0</td>
+      <td>0.3400</td>
+      <td>0.131</td>
+      <td>0.000000</td>
+      <td>0.2410</td>
+      <td>0.4560</td>
+      <td>120.000</td>
+    </tr>
+    <tr>
+      <td>spotify:track:2dR5MnJ36xY7EIjUurTsZd</td>
+      <td>White Christmas</td>
+      <td>Peggy Lee</td>
+      <td>Christmas Carousel</td>
+      <td>128600</td>
+      <td>0.195</td>
+      <td>0.0919</td>
+      <td>1.0</td>
+      <td>-20.790</td>
+      <td>1.0</td>
+      <td>0.0346</td>
+      <td>0.924</td>
+      <td>0.048200</td>
+      <td>0.2690</td>
+      <td>0.0821</td>
+      <td>76.349</td>
+    </tr>
+    <tr>
+      <td>spotify:track:3N4GoZVZP0KgvWhPwfTT0Y</td>
+      <td>I Want to Come Home for Christmas</td>
+      <td>Ne-Yo</td>
+      <td>The Best Man Holiday: Original Motion Picture ...</td>
+      <td>224813</td>
+      <td>0.448</td>
+      <td>0.5840</td>
+      <td>6.0</td>
+      <td>-6.883</td>
+      <td>0.0</td>
+      <td>0.0365</td>
+      <td>0.282</td>
+      <td>0.000004</td>
+      <td>0.0627</td>
+      <td>0.6350</td>
+      <td>177.933</td>
+    </tr>
+    <tr>
+      <td>spotify:track:3hL7DGsF3ZIeWOjXRGhM8V</td>
+      <td>Have Yourself A Merry Little Christmas</td>
+      <td>Darius Rucker</td>
+      <td>Home For The Holidays</td>
+      <td>218973</td>
+      <td>0.337</td>
+      <td>0.3310</td>
+      <td>10.0</td>
+      <td>-8.876</td>
+      <td>1.0</td>
+      <td>0.0274</td>
+      <td>0.764</td>
+      <td>0.000006</td>
+      <td>0.1090</td>
+      <td>0.3150</td>
+      <td>76.013</td>
+    </tr>
+    <tr>
+      <td>spotify:track:4rtQy0rw2Ak6IYXpLp6bG3</td>
+      <td>Silent Night</td>
+      <td>Jimmie Rodgers</td>
+      <td>It's Christmas Once Again</td>
+      <td>184320</td>
+      <td>0.150</td>
+      <td>0.0577</td>
+      <td>0.0</td>
+      <td>-21.568</td>
+      <td>1.0</td>
+      <td>0.0388</td>
+      <td>0.984</td>
+      <td>0.354000</td>
+      <td>0.3450</td>
+      <td>0.0531</td>
+      <td>84.480</td>
+    </tr>
+    <tr>
+      <td>spotify:track:6p93MMVIj5iD4ny2YJFSgP</td>
+      <td>All I Want for Christmas Is You</td>
+      <td>Ameritz Tribute Standards</td>
+      <td>All I Want for Christmas Is You - A Tribute to...</td>
+      <td>225381</td>
+      <td>0.359</td>
+      <td>0.2810</td>
+      <td>9.0</td>
+      <td>-15.076</td>
+      <td>1.0</td>
+      <td>0.0325</td>
+      <td>0.378</td>
+      <td>0.000881</td>
+      <td>0.1530</td>
+      <td>0.3610</td>
+      <td>72.006</td>
+    </tr>
+    <tr>
+      <td>spotify:track:75Qx3e0bJYhl42kMoQk06b</td>
+      <td>Frosty the Snowman</td>
+      <td>Fiona Apple</td>
+      <td>Christmas Calling</td>
+      <td>130773</td>
+      <td>0.763</td>
+      <td>0.1290</td>
+      <td>5.0</td>
+      <td>-12.128</td>
+      <td>1.0</td>
+      <td>0.0540</td>
+      <td>0.833</td>
+      <td>0.000003</td>
+      <td>0.1250</td>
+      <td>0.6710</td>
+      <td>148.073</td>
+    </tr>
+    <tr>
+      <td>spotify:track:79a2ejVzj2SpXkpWdfv1Co</td>
+      <td>Sleigh Ride</td>
+      <td>Ella Fitzgerald</td>
+      <td>Ella Wishes You A Swinging Christmas</td>
+      <td>175986</td>
+      <td>0.485</td>
+      <td>0.2970</td>
+      <td>1.0</td>
+      <td>-12.332</td>
+      <td>1.0</td>
+      <td>0.0794</td>
+      <td>0.777</td>
+      <td>0.000000</td>
+      <td>0.1240</td>
+      <td>0.6220</td>
+      <td>154.639</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Suggested additions (kNN on song-space PCA):
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>track_name</th>
+      <th>artist_name</th>
+      <th>album_name</th>
+      <th>duration_ms</th>
+      <th>danceability</th>
+      <th>energy</th>
+      <th>key</th>
+      <th>loudness</th>
+      <th>mode</th>
+      <th>speechiness</th>
+      <th>acousticness</th>
+      <th>instrumentalness</th>
+      <th>liveness</th>
+      <th>valence</th>
+      <th>tempo</th>
+    </tr>
+    <tr>
+      <th>track_uri</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>spotify:track:03CLsFk6JSz301bKuukPSD</td>
+      <td>Retrograde</td>
+      <td>James Blake</td>
+      <td>Overgrown</td>
+      <td>223600</td>
+      <td>0.324</td>
+      <td>0.256</td>
+      <td>7.0</td>
+      <td>-11.229</td>
+      <td>0.0</td>
+      <td>0.0420</td>
+      <td>0.86900</td>
+      <td>0.078000</td>
+      <td>0.1340</td>
+      <td>0.182</td>
+      <td>77.906</td>
+    </tr>
+    <tr>
+      <td>spotify:track:4RUo7JZ4aHmVYnfRlU264F</td>
+      <td>Ecco Chamber</td>
+      <td>Blank Banshee</td>
+      <td>Mega</td>
+      <td>144943</td>
+      <td>0.546</td>
+      <td>0.706</td>
+      <td>7.0</td>
+      <td>-7.226</td>
+      <td>1.0</td>
+      <td>0.0626</td>
+      <td>0.39400</td>
+      <td>0.076800</td>
+      <td>0.2170</td>
+      <td>0.295</td>
+      <td>177.976</td>
+    </tr>
+    <tr>
+      <td>spotify:track:5N4vVbNotNwWGG8KcCdstR</td>
+      <td>Cosmic Dancer - Remastered</td>
+      <td>T. Rex</td>
+      <td>Electric Warrior [Expanded &amp; Remastered]</td>
+      <td>270000</td>
+      <td>0.370</td>
+      <td>0.694</td>
+      <td>0.0</td>
+      <td>-11.713</td>
+      <td>1.0</td>
+      <td>0.0595</td>
+      <td>0.01800</td>
+      <td>0.003650</td>
+      <td>0.1820</td>
+      <td>0.651</td>
+      <td>155.093</td>
+    </tr>
+    <tr>
+      <td>spotify:track:5LYa9BJpJIeKonuz5KqkCq</td>
+      <td>Human</td>
+      <td>DIIV</td>
+      <td>Oshin</td>
+      <td>176544</td>
+      <td>0.367</td>
+      <td>0.663</td>
+      <td>5.0</td>
+      <td>-12.090</td>
+      <td>1.0</td>
+      <td>0.0358</td>
+      <td>0.09390</td>
+      <td>0.785000</td>
+      <td>0.1750</td>
+      <td>0.550</td>
+      <td>148.053</td>
+    </tr>
+    <tr>
+      <td>spotify:track:5H6aqBMhr9AwoPNyCSNYbE</td>
+      <td>May It Be (De "El Señor DE Los Anillos")</td>
+      <td>DJ Chill Out</td>
+      <td>Chill Out Sessions Vol. 2</td>
+      <td>211400</td>
+      <td>0.212</td>
+      <td>0.227</td>
+      <td>9.0</td>
+      <td>-14.874</td>
+      <td>1.0</td>
+      <td>0.0349</td>
+      <td>0.77800</td>
+      <td>0.425000</td>
+      <td>0.1130</td>
+      <td>0.104</td>
+      <td>71.840</td>
+    </tr>
+    <tr>
+      <td>spotify:track:5Gvc9zyG3NnElwzHaOLH4X</td>
+      <td>Do You Feel The Love</td>
+      <td>Shwayze &amp; Cisco</td>
+      <td>Island In The Sun</td>
+      <td>221162</td>
+      <td>0.835</td>
+      <td>0.567</td>
+      <td>1.0</td>
+      <td>-6.600</td>
+      <td>1.0</td>
+      <td>0.0357</td>
+      <td>0.00631</td>
+      <td>0.000088</td>
+      <td>0.0642</td>
+      <td>0.840</td>
+      <td>119.991</td>
+    </tr>
+    <tr>
+      <td>spotify:track:5CqXrqDRXfF5jNVwT0nmPF</td>
+      <td>When - Live</td>
+      <td>dodie</td>
+      <td>Intertwined - EP</td>
+      <td>195000</td>
+      <td>0.308</td>
+      <td>0.179</td>
+      <td>8.0</td>
+      <td>-12.934</td>
+      <td>1.0</td>
+      <td>0.0332</td>
+      <td>0.92900</td>
+      <td>0.004100</td>
+      <td>0.1080</td>
+      <td>0.285</td>
+      <td>72.702</td>
+    </tr>
+    <tr>
+      <td>spotify:track:58MfY2ldjq25ei7fRRWLae</td>
+      <td>Happy End In Agrabah</td>
+      <td>Alan Menken</td>
+      <td>Aladdin</td>
+      <td>255253</td>
+      <td>0.215</td>
+      <td>0.138</td>
+      <td>5.0</td>
+      <td>-17.188</td>
+      <td>1.0</td>
+      <td>0.0390</td>
+      <td>0.91100</td>
+      <td>0.706000</td>
+      <td>0.3560</td>
+      <td>0.143</td>
+      <td>128.061</td>
+    </tr>
+    <tr>
+      <td>spotify:track:51sQVSPkAZs2wtjZLcbpfX</td>
+      <td>Return Of The Rainman</td>
+      <td>Paul Hardcastle</td>
+      <td>19 Below Zero</td>
+      <td>523386</td>
+      <td>0.675</td>
+      <td>0.387</td>
+      <td>3.0</td>
+      <td>-15.755</td>
+      <td>0.0</td>
+      <td>0.0302</td>
+      <td>0.71100</td>
+      <td>0.645000</td>
+      <td>0.3680</td>
+      <td>0.239</td>
+      <td>124.998</td>
+    </tr>
+    <tr>
+      <td>spotify:track:4wMRo12qupmGNj0sh341xb</td>
+      <td>Nova</td>
+      <td>Ahrix</td>
+      <td>Nova</td>
+      <td>281325</td>
+      <td>0.859</td>
+      <td>0.530</td>
+      <td>4.0</td>
+      <td>-14.865</td>
+      <td>0.0</td>
+      <td>0.0777</td>
+      <td>0.01400</td>
+      <td>0.818000</td>
+      <td>0.0995</td>
+      <td>0.349</td>
+      <td>127.977</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Suggested additions (kNN on playlist-space PCA):
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>track_name</th>
+      <th>artist_name</th>
+      <th>album_name</th>
+      <th>duration_ms</th>
+      <th>danceability</th>
+      <th>energy</th>
+      <th>key</th>
+      <th>loudness</th>
+      <th>mode</th>
+      <th>speechiness</th>
+      <th>acousticness</th>
+      <th>instrumentalness</th>
+      <th>liveness</th>
+      <th>valence</th>
+      <th>tempo</th>
+    </tr>
+    <tr>
+      <th>track_uri</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>spotify:track:0Jkar9ArdBMtOqiF0S7zIv</td>
+      <td>Melodia Africana III</td>
+      <td>Ludovico Einaudi</td>
+      <td>I Giorni</td>
+      <td>259880</td>
+      <td>0.131</td>
+      <td>0.0853</td>
+      <td>5.0</td>
+      <td>-25.237</td>
+      <td>1.0</td>
+      <td>0.0407</td>
+      <td>0.974000</td>
+      <td>0.869000</td>
+      <td>0.0901</td>
+      <td>0.0364</td>
+      <td>178.808</td>
+    </tr>
+    <tr>
+      <td>spotify:track:41pFyxOpS119Pb8JEzhx0w</td>
+      <td>Boulevard Of Broken Dreams - feat. John Gallag...</td>
+      <td>Green Day</td>
+      <td>The Original Broadway Cast Recording 'American...</td>
+      <td>262386</td>
+      <td>0.417</td>
+      <td>0.6470</td>
+      <td>8.0</td>
+      <td>-5.870</td>
+      <td>1.0</td>
+      <td>0.0296</td>
+      <td>0.056900</td>
+      <td>0.000002</td>
+      <td>0.0585</td>
+      <td>0.3390</td>
+      <td>166.120</td>
+    </tr>
+    <tr>
+      <td>spotify:track:4fxKeUoGS2kWIycVwhaFJ7</td>
+      <td>Hip Hop Dub Instrumental Style</td>
+      <td>Hip Hop Instrumentals</td>
+      <td>Hip Hop Instrumentals: Platinum Freestyle Inst...</td>
+      <td>436402</td>
+      <td>0.538</td>
+      <td>0.7140</td>
+      <td>11.0</td>
+      <td>-6.999</td>
+      <td>1.0</td>
+      <td>0.0390</td>
+      <td>0.000849</td>
+      <td>0.860000</td>
+      <td>0.3520</td>
+      <td>0.4770</td>
+      <td>76.946</td>
+    </tr>
+    <tr>
+      <td>spotify:track:4fwqAO7Sq7jSCWeliHadVf</td>
+      <td>Hollow</td>
+      <td>Submersed</td>
+      <td>In Due Time</td>
+      <td>244520</td>
+      <td>0.377</td>
+      <td>0.9630</td>
+      <td>11.0</td>
+      <td>-4.622</td>
+      <td>1.0</td>
+      <td>0.1210</td>
+      <td>0.000219</td>
+      <td>0.018100</td>
+      <td>0.2510</td>
+      <td>0.1800</td>
+      <td>108.120</td>
+    </tr>
+    <tr>
+      <td>spotify:track:4fwFP5AWlh3zTZQOdbMlMi</td>
+      <td>Gravel To Tempo</td>
+      <td>Hayley Kiyoko</td>
+      <td>Gravel To Tempo</td>
+      <td>211426</td>
+      <td>0.578</td>
+      <td>0.8440</td>
+      <td>2.0</td>
+      <td>-4.764</td>
+      <td>0.0</td>
+      <td>0.0482</td>
+      <td>0.064600</td>
+      <td>0.000358</td>
+      <td>0.1140</td>
+      <td>0.4090</td>
+      <td>100.050</td>
+    </tr>
+    <tr>
+      <td>spotify:track:4fmWPsnF62l6J3c8RKPwix</td>
+      <td>Too Good Looking - Sam Smith Remix</td>
+      <td>CHK NRS</td>
+      <td>Too Good Looking</td>
+      <td>410884</td>
+      <td>0.760</td>
+      <td>0.5460</td>
+      <td>8.0</td>
+      <td>-9.226</td>
+      <td>1.0</td>
+      <td>0.0551</td>
+      <td>0.008990</td>
+      <td>0.244000</td>
+      <td>0.0706</td>
+      <td>0.3910</td>
+      <td>127.985</td>
+    </tr>
+    <tr>
+      <td>spotify:track:4OLa2mTkpFTHiFOlGIfYim</td>
+      <td>BZRK</td>
+      <td>Family Force 5</td>
+      <td>Time Stands Still</td>
+      <td>221318</td>
+      <td>0.713</td>
+      <td>0.9230</td>
+      <td>2.0</td>
+      <td>-5.237</td>
+      <td>1.0</td>
+      <td>0.0787</td>
+      <td>0.003380</td>
+      <td>0.000000</td>
+      <td>0.4190</td>
+      <td>0.3950</td>
+      <td>115.955</td>
+    </tr>
+    <tr>
+      <td>spotify:track:4OLEhAXH1JqnIJNRnRU1JI</td>
+      <td>Love Like Fire</td>
+      <td>Hillsong Worship</td>
+      <td>A Beautiful Exchange</td>
+      <td>376706</td>
+      <td>0.296</td>
+      <td>0.6030</td>
+      <td>4.0</td>
+      <td>-7.181</td>
+      <td>1.0</td>
+      <td>0.0342</td>
+      <td>0.017100</td>
+      <td>0.000014</td>
+      <td>0.1350</td>
+      <td>0.0759</td>
+      <td>161.664</td>
+    </tr>
+    <tr>
+      <td>spotify:track:4BTLDA67rSlo4pDIJHz1Xr</td>
+      <td>Don't Lose Heart (Acoustic)</td>
+      <td>JJ Heller</td>
+      <td>Don't Lose Heart</td>
+      <td>216218</td>
+      <td>0.570</td>
+      <td>0.2830</td>
+      <td>10.0</td>
+      <td>-7.828</td>
+      <td>1.0</td>
+      <td>0.0286</td>
+      <td>0.848000</td>
+      <td>0.000000</td>
+      <td>0.1180</td>
+      <td>0.4290</td>
+      <td>151.443</td>
+    </tr>
+    <tr>
+      <td>spotify:track:4OMreMBdFMvXg4nyh6KIAB</td>
+      <td>Night Train - Single Version</td>
+      <td>James Brown</td>
+      <td>20 All-Time Greatest Hits!</td>
+      <td>211093</td>
+      <td>0.821</td>
+      <td>0.6410</td>
+      <td>1.0</td>
+      <td>-9.095</td>
+      <td>1.0</td>
+      <td>0.1070</td>
+      <td>0.219000</td>
+      <td>0.007830</td>
+      <td>0.2230</td>
+      <td>0.9160</td>
+      <td>130.588</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Suggested additions (NMF on playlist data):
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>track_name</th>
+      <th>artist_name</th>
+      <th>album_name</th>
+      <th>duration_ms</th>
+      <th>danceability</th>
+      <th>energy</th>
+      <th>key</th>
+      <th>loudness</th>
+      <th>mode</th>
+      <th>speechiness</th>
+      <th>acousticness</th>
+      <th>instrumentalness</th>
+      <th>liveness</th>
+      <th>valence</th>
+      <th>tempo</th>
+    </tr>
+    <tr>
+      <th>track_uri</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>spotify:track:2OjGozrTLoMwJ5GkyCiZ4x</td>
+      <td>I Want a Hippopotamus for Christmas</td>
+      <td>LeAnn Rimes</td>
+      <td>One Christmas: Chapter One</td>
+      <td>256253</td>
+      <td>0.370</td>
+      <td>0.707</td>
+      <td>8.0</td>
+      <td>-6.651</td>
+      <td>1.0</td>
+      <td>0.0520</td>
+      <td>0.0181</td>
+      <td>0.000000</td>
+      <td>0.0773</td>
+      <td>0.886</td>
+      <td>186.040</td>
+    </tr>
+    <tr>
+      <td>spotify:track:1VOJQx3i0ESCFsyjMbh4Yp</td>
+      <td>O Holy Night</td>
+      <td>Smokie Norful</td>
+      <td>Smokie Norful Limited Edition</td>
+      <td>320106</td>
+      <td>0.257</td>
+      <td>0.335</td>
+      <td>0.0</td>
+      <td>-7.781</td>
+      <td>1.0</td>
+      <td>0.0294</td>
+      <td>0.9010</td>
+      <td>0.000000</td>
+      <td>0.1730</td>
+      <td>0.237</td>
+      <td>143.160</td>
+    </tr>
+    <tr>
+      <td>spotify:track:2wH49WeBqcQoql5W9koXcM</td>
+      <td>12 Days of Christmas</td>
+      <td>Traditional Christmas Song</td>
+      <td>Christmas At Downton Abbey</td>
+      <td>265800</td>
+      <td>0.343</td>
+      <td>0.255</td>
+      <td>0.0</td>
+      <td>-13.504</td>
+      <td>1.0</td>
+      <td>0.0393</td>
+      <td>0.8930</td>
+      <td>0.000000</td>
+      <td>0.1110</td>
+      <td>0.459</td>
+      <td>81.607</td>
+    </tr>
+    <tr>
+      <td>spotify:track:2AazSmeOckrWcJjbeGSlJx</td>
+      <td>Merry Christmas Baby</td>
+      <td>Drew Holcomb &amp; The Neighbors</td>
+      <td>A Neighborly Christmas</td>
+      <td>202946</td>
+      <td>0.671</td>
+      <td>0.392</td>
+      <td>5.0</td>
+      <td>-11.293</td>
+      <td>1.0</td>
+      <td>0.0433</td>
+      <td>0.1980</td>
+      <td>0.000060</td>
+      <td>0.1060</td>
+      <td>0.492</td>
+      <td>96.257</td>
+    </tr>
+    <tr>
+      <td>spotify:track:7LRmY1B3Z2N5gXHXFJ5n2a</td>
+      <td>All I Want For Christmas Is You (SuperFestive!...</td>
+      <td>Justin Bieber</td>
+      <td>Under The Mistletoe</td>
+      <td>240333</td>
+      <td>0.575</td>
+      <td>0.903</td>
+      <td>9.0</td>
+      <td>-5.241</td>
+      <td>0.0</td>
+      <td>0.0617</td>
+      <td>0.3370</td>
+      <td>0.000000</td>
+      <td>0.3720</td>
+      <td>0.482</td>
+      <td>149.942</td>
+    </tr>
+    <tr>
+      <td>spotify:track:44S9BTX9ruy0AgVUGJjv4E</td>
+      <td>O Holy Night</td>
+      <td>Julian Ovenden</td>
+      <td>100 Xmas Songs</td>
+      <td>256986</td>
+      <td>0.134</td>
+      <td>0.219</td>
+      <td>1.0</td>
+      <td>-15.351</td>
+      <td>1.0</td>
+      <td>0.0338</td>
+      <td>0.8980</td>
+      <td>0.000019</td>
+      <td>0.1070</td>
+      <td>0.146</td>
+      <td>89.373</td>
+    </tr>
+    <tr>
+      <td>spotify:track:6Igf8thOeLLUzKMrEa6FEc</td>
+      <td>Little Drummer Boy</td>
+      <td>Phil Wickham</td>
+      <td>Songs for Christmas</td>
+      <td>277053</td>
+      <td>0.646</td>
+      <td>0.642</td>
+      <td>9.0</td>
+      <td>-10.930</td>
+      <td>1.0</td>
+      <td>0.0469</td>
+      <td>0.5380</td>
+      <td>0.028900</td>
+      <td>0.0929</td>
+      <td>0.530</td>
+      <td>103.030</td>
+    </tr>
+    <tr>
+      <td>spotify:track:1tJULFJmqZUh3u1xKwA9q6</td>
+      <td>All I Want For Christmas Is You</td>
+      <td>Lady Antebellum</td>
+      <td>On This Winter's Night</td>
+      <td>215800</td>
+      <td>0.617</td>
+      <td>0.536</td>
+      <td>5.0</td>
+      <td>-6.855</td>
+      <td>1.0</td>
+      <td>0.0295</td>
+      <td>0.7150</td>
+      <td>0.000000</td>
+      <td>0.2480</td>
+      <td>0.195</td>
+      <td>125.928</td>
+    </tr>
+    <tr>
+      <td>spotify:track:0lOi6nt1QpadU7mGdSCSZ2</td>
+      <td>The Christmas Waltz</td>
+      <td>She &amp; Him</td>
+      <td>A Very She &amp; Him Christmas</td>
+      <td>157453</td>
+      <td>0.559</td>
+      <td>0.107</td>
+      <td>2.0</td>
+      <td>-12.524</td>
+      <td>0.0</td>
+      <td>0.0372</td>
+      <td>0.9080</td>
+      <td>0.012900</td>
+      <td>0.2690</td>
+      <td>0.319</td>
+      <td>110.488</td>
+    </tr>
+    <tr>
+      <td>spotify:track:4sBxoJJ03BCf8hXXLcfxSG</td>
+      <td>What Child Is This?</td>
+      <td>Earth, Wind &amp; Fire</td>
+      <td>Holiday</td>
+      <td>214186</td>
+      <td>0.586</td>
+      <td>0.741</td>
+      <td>5.0</td>
+      <td>-5.747</td>
+      <td>0.0</td>
+      <td>0.0490</td>
+      <td>0.0823</td>
+      <td>0.366000</td>
+      <td>0.0767</td>
+      <td>0.573</td>
+      <td>92.002</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Taking the top predictions of each model on a random selection of Christmas songs (not a pre-existing playlist but 10 songs chosen at random containing the word Christmas) it becomes very clear that the baseline model does not suggest relevant predictions. The songs returned appear to be an eclectic mix with no discernable thread which connects them, presumably however they will be nearby in attribute space. Both the PCA and NMF models clearly find the relevance of Christmas to the original playlist and recommend a selection of only Christmas songs, which is a positive result in both these model’s favor.</p>
+<p>Manually inspecting the returned playlists highlights a very interesting result between the NMF model and the PCA model. The songs returned from both the PCA and NMF model appear very similar on the surface, they are both clearly relevant Christmas songs. The key difference however is that the NMF songs all appear to be coming from relatively fewer playlists than the songs from the PCA model. Whilst not inherently a bad thing, and resulting in it outperforming PCA on the test scores, it does indicate that the NMF model is overfit to specific playlists within the dataset and prefers to draw many songs from only a few core playlists. Empirically these appear to be the larger playlists and so we may wish to downweight the effects of these unusually large playlists in the future.</p>
+
+</div>
+</div>
+</div>
+ 
+

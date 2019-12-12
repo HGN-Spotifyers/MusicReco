@@ -18,15 +18,9 @@
   <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans&display=swap" rel="stylesheet">
   <!-- Custom styles for this template-->
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/jupyter.css">
-
   <link rel="stylesheet" href="css/style.css">
   <script src="vendor/jquery/jquery.min.js"></script>
-  <script>
-    $(function(){
 
-    });
-  </script>
 
 </head>
 
@@ -56,11 +50,11 @@
         <span>Home</span></a>
     </li>
 
-	  <li class="nav-item">
-		  <a class="nav-link" href="About.html" style="padding-top: 0px">
-			  <i class="fas fa-users"></i>
-			  <span>About</span></a>
-	  </li>
+    <li class="nav-item">
+      <a class="nav-link" href="About.html" style="padding-top: 0px">
+        <i class="fas fa-users"></i>
+        <span>About</span></a>
+    </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider">
@@ -121,16 +115,16 @@
     </li>
 
     <!-- Nav Item - Utilities Collapse Menu -->
-    <li class="nav-item active">
+    <li class="nav-item">
       <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseModels" aria-expanded="true" aria-controls="collapseModels">
         <i class="fas fa-fw fa-chart-line"></i>
         <span>Models</span>
       </a>
-      <div id="collapseModels" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+      <div id="collapseModels" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
           <h6 class="collapse-header">Models Pages:</h6>
           <a class="collapse-item" href="Models.html">Methods</a>
-          <a class="collapse-item active" href="Models-Baseline.html">Song Attributes KNN</a>
+          <a class="collapse-item" href="Models-Baseline.html">Song Attributes KNN</a>
           <a class="collapse-item" href="Models-PCA.html">Playlist KNN</a>
           <a class="collapse-item" href="Models-NMF1.html">NMF</a>
           <a class="collapse-item" href="Models-NMF2.html">NMF - Optimization</a>
@@ -140,17 +134,19 @@
     </li>
 
     <!-- Nav Item - Utilities Collapse Menu -->
-    <li class="nav-item">
+    <li class="nav-item active">
       <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseResults" aria-expanded="true" aria-controls="collapseResults">
         <i class="fas fa-fw fa-tasks"></i>
         <span>Results</span>
       </a>
-      <div id="collapseResults" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+      <div id="collapseResults" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
           <h6 class="collapse-header">Results Sections:</h6>
-          <a class="collapse-item" href="Results.html">Main</a>
-          <a class="collapse-item" href="Results.html#Section1">Section1</a>
-          <a class="collapse-item" href="Results.html#Section2">Section2</a>
+          <a class="collapse-item" href="Results.html">Results Intro</a>
+          <a class="collapse-item" href="ResultsMain.html">Results</a>
+          <a class="collapse-item" href="Conclusion.html">Conclusions</a>
+          <a class="collapse-item" href="ColdStart.html">Cold Start</a>
+          <a class="collapse-item active" href="FutureWork.html">Future Work</a>
         </div>
       </div>
     </li>
@@ -182,7 +178,7 @@
 
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4 mytitle">
-          <h1 class="h3 mb-0 text-gray-800">Models</h1>
+          <h1 class="h3 mb-0 text-gray-800">Conclusions</h1>
         </div>
 
 
@@ -193,39 +189,20 @@
             <div class="card shadow mb-4">
               <!-- Card Header - Dropdown -->
               <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">KNN Model on PCA Space of Song Attributes</a></h6>
+                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Conclusions</a></h6>
               </div>
               <!-- Card Body -->
               <div class="card-body">
-                To understand whether the collaborative filtering approaches based on user generates playlists are
-                effective, a baseline model which does not take into account this data is required. The baseline model
-                will therefore be purely based on the song attribute data and hence, if our theory is correct, provide
-                recommendations which perform <b>poorly</b> when matched with what a human would choose to put on a playlist.
-                <br><br>
-                For song recommendations this baseline model will first perform <a href="EDA.html#Section3">PCA on the song attributes space</a> down to
-                5 components (from the 11 attributes) as this should reduce sparsity and ensure that individual songs
-                are closer together in terms of attributes.
-                <br><br>
-                As a test example (see below), given a playlist with 3 songs the prediction process is as follows:
-                <ol>
-                  <li>Locate each song from the given playlist in PC space (highlighted as the X points on the graph)</li>
-                  <li>Find the closest n (in this case 5) neighbours to this point using a nearest neighbour algorithm
-                  (including or excluding the current point)</li>
-                  <li>Create a pool of suggested songs with all those songs found from the previous step (15 total non-blue dots, there are 2 that are double counted).</li>
-                  <li>Remove songs which are already on the playlist - resulting in 12 song suggestions</li>
-                  <li>Deduplicate and count, as there can be overlap in terms of the neighbouring songs, calculate
-                    how many times each song appears. Here there are 2 counted twice so we have 10 unique.</li>
-                  <li>Recommend songs based on which ones have the highest count</li>
-                </ol>
-                <div class="cardimage">
-                  <img src="img/baseline_model_ex.png" alt="baselinemodel" width="60%">
-                </div><br>
-                In this example above, each of the seeds songs returns the closest neighbours, coloured red, orange or
-                green respectively. There are two songs which overlap, one appears in both the song-1-song-2 neighborhood
-                and the other appears in the song-2-song-3 neighborhood (hence those songs coloured twice). Removing the
-                original 3 songs from the suggestions leaves 10 unique recommended songs. Two of which are ranked
-                higher and so would be suggested first. The remaining are suggested in a random order.
+                <p>
+                  From these results we can see that the models which incorporate playlist information, and hence include an element of human choice outperform the baseline model trained purely on the song attributes when predicting held out songs from a given set of playlists.
 
+                  When scoring against the centerpoint of the playlist space rather than the centrepoint of the held out songs, the baseline attributes model actually performs the best. When considered carefully however this isn’t that surprising. The attributes model was designed to choose the songs selected most frequently amongst the original playlist that were not on the original playlist. By definition these songs are more likely to be clustered around the centroid of the playlist. However this means the model is overfitting to centre of the playlist (in attribute space) which is exactly what we were hoping to avoid with the collaborative filtering approaches.
+
+                  The PCA and NMF collaborative filtering approaches both perform very similarly on the held out test set and consistently outperform the attributes model at predicting randomly held out songs. NMF shows a slight improvement in score on both metrics however. This is a promising proof of the collaborative filtering approach.
+
+                  We also demonstrated a new methodology for selecting which songs to recommend based on a smoothed path system. This method could also aid in preventing the sort of overfitting to just specific playlists which appears to be seen in the top recommendations of the NMF and hence something worth taking forward into future research.
+
+                </p>
               </div>
             </div>
           </div>
@@ -278,6 +255,7 @@
   </div>
 
   <!-- Bootstrap core JavaScript-->
+
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Core plugin JavaScript-->

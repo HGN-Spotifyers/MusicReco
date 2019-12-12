@@ -87,7 +87,7 @@
       </a>
       <div id="collapseLit" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-          <h6 class="collapse-header">Lit Review:</h6>
+          <h6 class="collapse-header">Lit Review Sections:</h6>
           <a class="collapse-item" href="LitReview.html">Main</a>
           <a class="collapse-item" href="LitReview.html#Section1">Intro</a>
           <a class="collapse-item" href="LitReview.html#Section2">Content-Based Recs <br> vs. Collaborative Filtering</a>
@@ -134,20 +134,22 @@
     </li>
 
     <!-- Nav Item - Utilities Collapse Menu -->
-    <li class="nav-item active">
-      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseResults" aria-expanded="true" aria-controls="collapseResults">
-        <i class="fas fa-fw fa-tasks"></i>
-        <span>Results</span>
-      </a>
-      <div id="collapseResults" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-        <div class="bg-white py-2 collapse-inner rounded">
-          <h6 class="collapse-header">Results Sections:</h6>
-          <a class="collapse-item" href="Results.html">Main</a>
-          <a class="collapse-item" href="Results.html#Section1">Section1</a>
-          <a class="collapse-item" href="Results.html#Section2">Section2</a>
-        </div>
-      </div>
-    </li>
+	  <li class="nav-item active">
+		  <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseResults" aria-expanded="true" aria-controls="collapseResults">
+			  <i class="fas fa-fw fa-tasks"></i>
+			  <span>Results</span>
+		  </a>
+		  <div id="collapseResults" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+			  <div class="bg-white py-2 collapse-inner rounded">
+				  <h6 class="collapse-header">Results Sections:</h6>
+				  <a class="collapse-item active" href="Results.html">Results Intro</a>
+				  <a class="collapse-item" href="ResultsMain.html">Results</a>
+				  <a class="collapse-item" href="Conclusion.html">Conclusions</a>
+				  <a class="collapse-item" href="ColdStart.html">Cold Start</a>
+				  <a class="collapse-item" href="FutureWork.html">Future Work</a>
+			  </div>
+		  </div>
+	  </li>
 
 
 
@@ -183,17 +185,36 @@
         <div class="row">
 
           <!-- Area Chart -->
+	        <div class="col-xl-12">
+		        <div class="card shadow mb-4">
+			        <!-- Card Header - Dropdown -->
+			        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+				        <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Evaluation Approach</a></h6>
+			        </div>
+			        <!-- Card Body -->
+			        <div class="card-body">
+				        <p>
+					        Given computational restrictions, we limited our evaluation to 1000 randomly selected playlists. We considered all songs that appeared in any one of those playlists, which amounted to about 35,000 unique songs. We began by performing an 80-20 split on the collection of playlists. (Since songs may appear on multiple playlists, it is possible for a given song to appear in both the training and test set.) We used the training data (800 playlists) to fit the NMF model, and as well as to obtain the PCA components on which we fitted our KNN classifier.
+
+					        The test data (200 playlists) was used for model evaluation. For each playlist in the test set, we randomly selected 20% of songs to set aside for scoring. With the remaining 80% of songs, we generated a list of song suggestions with each of our three models. We set the length of the song suggestion lists to equal the number of withheld songs. We then calculated three scoring metrics for each model (described below). Overall, we obtained three metrics for each mode and each playlists. We averaged each metric across all playlists for each model to obtain our final comparison.
+
+				        </p>
+			        </div>
+		        </div>
+	        </div>
           <div class="col-xl-12">
             <div class="card shadow mb-4">
               <!-- Card Header - Dropdown -->
               <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Section 1</a></h6>
+                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Model Comparisons</a></h6>
               </div>
               <!-- Card Body -->
               <div class="card-body">
                 <p>
-                  Section 1 Here
-                  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                  In order to evaluate each of the models specified in this report, we had to program and initialize
+                  generic model classes which were capable of operating an any arbitrary playlist of any length.
+                  Initialization of the parameters for each model. For consistency, the following list is the parameters
+                  set for each of the models for the full duration of the evaluation.
                 </p>
               </div>
             </div>
@@ -201,14 +222,68 @@
           <div class="col-xl-12">
             <div class="card shadow mb-4">
               <!-- Card Header - Dropdown -->
-              <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary"><a name="Section2">Section 2</a></h6>
-              </div>
+              <a name="Section2">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Parameters</h6>
+                </div>
+              </a>
               <!-- Card Body -->
               <div class="card-body">
                 <p>
-                  Section 2 Here
-                  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+                  <h5>Parameters:</h5><br>
+
+                  Song Attributes  KNN
+                  <ul>
+                <li>PCA components = 5</li>
+                  <li>Nearest Neighbors = 10</li>
+              </ul>
+
+                Playlist KNN
+                <ul>
+                  <li>PCA components = 12</li>
+                  <li>Nearest Neighbors  = 10</li>
+                </ul>
+
+                NMF
+                <ul>
+                  <li>Threshold value = 0.35</li>
+                  <li>Number of factors = 18</li>
+                </ul>
+
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-12">
+            <div class="card shadow mb-4">
+              <!-- Card Header - Dropdown -->
+              <a name="Section2">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Metrics</h6>
+                </div>
+              </a>
+              <!-- Card Body -->
+              <div class="card-body">
+                <p>
+                <h5>Classification accuracy:</h5>
+                  For each playlist in the test dataset, we withheld 20% of the songs in the playlist. We used the
+                remaining 80% of the playlist for prediction. We generated as many suggestions as there were withheld
+                songs, and calculated what percentage of the withheld songs were in the list of suggestions.
+                <br><br>
+                <h5>PCA distance: Characteristics of withheld songs:</h5>
+                  When 20% of songs in the playlist were withheld, we calculated their centroid in song attribute PCA
+                space. We do the same centroid calculation in this space for the predicted songs. We evaluate performance
+                based on the euclidean distance between these two regions.This essentially captures an average difference
+                of aggregated characteristics between actual and predicted. If the predicted songs fulfill the same
+                characteristics as the withheld songs, we assume we have made a good recommendation.
+                <br><br>
+                <h5>PCA distance: Characteristics of total playlists:</h5>
+                  This metric is similar to the previous one, however, here, we calculate the centroid/average
+                characteristic of the entire original playlist (with witheld songs) and compare that to the playlist
+                generated with the predictions. By calculating these two similar metrics, we hoped to highlight
+                differences in performance to better understand strengths/weaknesses of each model  - whether they
+                predicted general/average songs for the playlist or predicted specifically for the ones that were withheld.
+
                 </p>
               </div>
             </div>
