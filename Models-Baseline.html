@@ -114,7 +114,7 @@
           <h6 class="collapse-header">EDA Sections:</h6>
           <a class="collapse-item" href="EDA.html">Main</a>
           <a class="collapse-item" href="EDA.html#Section2">General Stats</a>
-          <a class="collapse-item" href="EDA.html#Section3">Song Characteristics PCA</a>
+          <a class="collapse-item" href="EDA.html#Section3">Song Attributes PCA</a>
           <a class="collapse-item" href="EDA.html#Section4">Playlist Space PCA</a>
         </div>
       </div>
@@ -130,8 +130,8 @@
         <div class="bg-white py-2 collapse-inner rounded">
           <h6 class="collapse-header">Models Pages:</h6>
           <a class="collapse-item" href="Models.html">Methods</a>
-          <a class="collapse-item active" href="Models-Baseline.html">Baseline</a>
-          <a class="collapse-item" href="Models-PCA.html">PCA</a>
+          <a class="collapse-item active" href="Models-Baseline.html">Song Attributes KNN</a>
+          <a class="collapse-item" href="Models-PCA.html">Playlist KNN</a>
           <a class="collapse-item" href="Models-NMF1.html">NMF</a>
           <a class="collapse-item" href="Models-NMF2.html">NMF - Optimization</a>
           <a class="collapse-item" href="Models-Smoothing.html">Song Smoothing</a>
@@ -193,7 +193,7 @@
             <div class="card shadow mb-4">
               <!-- Card Header - Dropdown -->
               <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">Baseline Model</a></h6>
+                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">KNN Model on PCA Space of Song Attributes</a></h6>
               </div>
               <!-- Card Body -->
               <div class="card-body">
@@ -202,11 +202,11 @@
                 will therefore be purely based on the song attribute data and hence, if our theory is correct, provide
                 recommendations which perform <b>poorly</b> when matched with what a human would choose to put on a playlist.
                 <br><br>
-                For song recommendations this baseline model will first perform <a href="EDA.html#Section3">PCA on the song characteristics space</a> down to
+                For song recommendations this baseline model will first perform <a href="EDA.html#Section3">PCA on the song attributes space</a> down to
                 5 components (from the 11 attributes) as this should reduce sparsity and ensure that individual songs
                 are closer together in terms of attributes.
                 <br><br>
-                As a test example (see below), given a playlist with three songs the prediction process is as follows:
+                As a test example (see below), given a playlist with 3 songs the prediction process is as follows:
                 <ol>
                   <li>Locate each song from the given playlist in PC space (highlighted as the X points on the graph)</li>
                   <li>Find the closest n (in this case 5) neighbours to this point using a nearest neighbour algorithm
@@ -223,7 +223,7 @@
                 In this example above, each of the seeds songs returns the closest neighbours, coloured red, orange or
                 green respectively. There are two songs which overlap, one appears in both the song-1-song-2 neighborhood
                 and the other appears in the song-2-song-3 neighborhood (hence those songs coloured twice). Removing the
-                original three songs from the suggestions leaves 10 unique recommended songs. Two are which are ranked
+                original 3 songs from the suggestions leaves 10 unique recommended songs. Two of which are ranked
                 higher and so would be suggested first. The remaining are suggested in a random order.
 
               </div>

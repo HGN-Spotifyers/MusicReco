@@ -115,7 +115,7 @@
           <h6 class="collapse-header">EDA Sections:</h6>
           <a class="collapse-item" href="EDA.html">Main</a>
           <a class="collapse-item" href="EDA.html#Section2">General Stats</a>
-          <a class="collapse-item" href="EDA.html#Section3">Song Characteristics PCA</a>
+          <a class="collapse-item" href="EDA.html#Section3">Song Attributes PCA</a>
           <a class="collapse-item" href="EDA.html#Section4">Playlist Space PCA</a>
         </div>
       </div>
@@ -129,10 +129,10 @@
       </a>
       <div id="collapseModels" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
-          <h6 class="collapse-header">Models Sections:</h6>
+          <h6 class="collapse-header">Models Pages:</h6>
           <a class="collapse-item" href="Models.html">Methods</a>
-          <a class="collapse-item" href="Models-Baseline.html">Baseline</a>
-          <a class="collapse-item active" href="Models-PCA.html">PCA</a>
+          <a class="collapse-item" href="Models-Baseline.html">Song Attributes KNN</a>
+          <a class="collapse-item active" href="Models-PCA.html">Playlist KNN</a>
           <a class="collapse-item" href="Models-NMF1.html">NMF</a>
           <a class="collapse-item" href="Models-NMF2.html">NMF - Optimization</a>
           <a class="collapse-item" href="Models-Smoothing.html">Song Smoothing</a>
@@ -194,11 +194,41 @@
             <div class="card shadow mb-4">
               <!-- Card Header - Dropdown -->
               <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">PCA</a></h6>
+                <h6 class="m-0 font-weight-bold text-primary"><a name="Section1">KNN Model on PCA Space of Song/Playlist Membership</a></h6>
               </div>
               <!-- Card Body -->
               <div class="card-body">
-                HERE
+                In order to capture nuances of playlist composition, we must incorporate information about song’s playlist
+                membership. It is clear that what belongs on a playlist may not be as simple as adding on more songs with
+                the mean valence/tempo/etc of the songs on the playlist.<br><br>
+
+                The first of the collaborative filtering models is the PCA-KNN, which operates on the song-playlist space.
+                This model captures inherent user preferences by reducing the song to playlist matrix down from all
+                playlists to a subset of principal (core) components which best describe the variance of the original
+                space -- compressing the information of all the different playlists particular songs were and were not
+                members of.<br><br>
+
+                From the EDA we discovered that this space appears to sensibly divide both song characteristics and known
+                genre based playlists into different areas of space, indicating its reasonable ability to “understand”
+                and incorporate these measures.<br><br>
+
+	              <div class="cardimage">
+		              <img src="img/countrypca.png" alt="countrypca" width="100%">
+	              </div>
+	              <span style="font-size: smaller;">Above, we can see above how a given country playlist occupies a
+		              certain region in this PCA space. The characteristics of songs in this region also tend to have
+		              high instrumentalness and generally high acousticness. As this PCA space is able to encode and separate these
+	              multiple metrics, the hope is that this KNN model will perform well on finding similar or new songs for playlists.</span><br> <br>
+
+                Our method for this PCA space model was similar to that of the previous baseline song characteristics-based
+                KNN model. The space was created using the first 12 principal components, and the 10 closest neighbors
+                were identified for each song on a given playlist. The pool of recommended songs is then generated, again,
+                removing songs that already exist on the playlists and overlapping songs that appear multiple times as
+                neighbors are weighted higher. Recommendations are thus made in descending order of occurrence and then randomly.<br><br>
+
+                We will investigate the performance of this playlist PCA space KNN against the song attributes PCA space
+                KNN in the results section.<br><br>
+
               </div>
             </div>
           </div>
