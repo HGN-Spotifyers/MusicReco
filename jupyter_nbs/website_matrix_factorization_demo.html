@@ -1,0 +1,314 @@
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To better understand how our Matrix Factorization model operates, we decided to build a toy example from scratch as a demonstration and proof of principle. The core idea of the MF model is to decompose a matrix into two smaller matrices which when multiplied return a good approximation of the original. Given enough 'factors' aka number of rows/columns the reconstructed matrix should perfectly replicate the original. The power of this approach however is in compressing the original information down into two matrices that capture the core elements of the original but when reconstructed produce an approximation. This approximate reconstruction of the matrix is what gives each song a relative score.</p>
+<p>What is difficult about this modelling method is that there is a near infinite number of possible pairs of decomposed matrices which could be multiplied in order to recreate a close approximation of the original and there is no practical method to go directly from the original analytically. Therefore we use a numeric approach based on gradient descent to iteratively improve upon our predictions for the decomposed P and Q matrices until we each a local optimum.</p>
+<p>The main stages for performing matrix factorization are as follows:</p>
+<ol>
+<li>Specify the shape of the two decomposed matrices, known as P and Q</li>
+<li>Take a guess at the values within each of matrices (seed values)</li>
+<li>Multiply P and Q to reconstruct a matrix and calculate the loss between the reconstructed and original matrix</li>
+<li>Differentiate the loss function with respect to each value in the matrices</li>
+<li>Based on the gradient, take a step towards minimizing the loss</li>
+<li>Repeat steps 4-6 until a local optimum point is found to a given tolerance.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For performing the differentiation of the loss function we use the autograd package</span>
+<span class="kn">import</span> <span class="nn">autograd.numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">autograd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Reconstruct the matrix</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">P</span> <span class="o">@</span> <span class="n">Q</span><span class="o">.</span><span class="n">T</span>
+
+<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="p">,</span><span class="n">R</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculate the cost function based on Sum Squared Error</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="p">)</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">r</span><span class="o">-</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span><span class="p">,</span><span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span><span class="n">S</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">r</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">errors</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="n">factors</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span><span class="n">rel_tol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span><span class="n">abs_tol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span><span class="n">max_iter</span><span class="o">=</span> <span class="mi">1000</span><span class="p">,</span><span class="n">random_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">printout</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Gradient descent optimization to find the best values for matrices P and Q</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">random_seed</span><span class="p">)</span>
+    
+    <span class="n">len_P</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">len_Q</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="c1"># Use autograd to calculate the gradient of the SSE loss function</span>
+    <span class="n">grad_cost</span> <span class="o">=</span> <span class="n">autograd</span><span class="o">.</span><span class="n">multigrad_dict</span><span class="p">(</span><span class="k">lambda</span> <span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="p">:</span> <span class="n">cost</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="p">,</span><span class="n">R</span><span class="p">))</span>
+
+    <span class="c1"># Randomly seed the P and Q matrix values (the weights)</span>
+    <span class="n">prev_P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">len_P</span><span class="p">,</span><span class="n">factors</span><span class="p">)</span>
+    <span class="n">prev_Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">len_Q</span><span class="p">,</span><span class="n">factors</span><span class="p">)</span>
+    <span class="n">prev_loss</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Iteratively improve weights using gradient descent until improvement is under tolerance </span>
+    <span class="n">converged</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">iteration</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">converged</span><span class="p">:</span>
+        <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">prev_P</span><span class="p">,</span><span class="n">prev_Q</span><span class="p">,</span><span class="n">R</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">grad_cost</span><span class="p">(</span><span class="n">prev_P</span><span class="p">,</span><span class="n">prev_Q</span><span class="p">)</span>
+        <span class="n">grad_P</span><span class="p">,</span><span class="n">grad_Q</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">],</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;Q&#39;</span><span class="p">]</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">prev_P</span> <span class="o">-</span> <span class="n">grad_P</span> <span class="o">*</span> <span class="n">alpha</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">prev_Q</span> <span class="o">-</span> <span class="n">grad_Q</span> <span class="o">*</span> <span class="n">alpha</span>
+        <span class="k">if</span> <span class="n">printout</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step </span><span class="si">{}</span><span class="s2">: loss=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iteration</span><span class="p">,</span><span class="n">loss</span><span class="p">))</span>
+        <span class="c1"># Check for stopping conditions:</span>
+        <span class="k">if</span> <span class="n">iteration</span> <span class="o">&gt;=</span> <span class="n">max_iter</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Stop : iterations=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iteration</span><span class="p">))</span>
+            <span class="n">converged</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">prev_loss</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">loss</span><span class="o">-</span><span class="n">prev_loss</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">abs_tol</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Stop : abs_tol=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">abs_tol</span><span class="p">))</span>
+            <span class="n">converged</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">prev_loss</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">abs</span><span class="p">((</span><span class="n">loss</span><span class="o">-</span><span class="n">prev_loss</span><span class="p">)</span><span class="o">/</span><span class="n">prev_loss</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">rel_tol</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Stop : rel_tol=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rel_tol</span><span class="p">))</span>
+            <span class="n">converged</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">break</span>
+        <span class="n">prev_loss</span> <span class="o">=</span> <span class="n">loss</span>
+        <span class="n">prev_P</span> <span class="o">=</span> <span class="n">P</span>
+        <span class="n">prev_Q</span> <span class="o">=</span> <span class="n">Q</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">converged</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Gradient descent did not converge.&quot;</span><span class="p">)</span>
+        
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">()</span>
+        
+    <span class="k">return</span> <span class="n">P</span><span class="p">,</span><span class="n">Q</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Given a simple test matrix - R which is this case represents four playlists with overlapping songs (of which there are 10). The first and forth playlists share no similar songs at all, whereas the second playlist is similar to both the first and third playlist. The third playlist is similar to the second and forth playlist. This contrived example therefore shows a case of four playlists which span a given musical space (for example: pl1 = country, pl2=country_rock, pl3=rock_metal, pl4=metal).</p>
+<p>This is the objective matrix that the matrix factorization model is attempting to reproduce.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+<span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">P</span><span class="p">,</span><span class="n">Q</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="n">factors</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">random_seed</span><span class="o">=</span><span class="mi">209</span><span class="p">)</span>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">P</span> <span class="o">@</span> <span class="n">Q</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Stop : rel_tol=1e-09
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Running the solver, specifying two factors produces the following results:</p>
+<p>P - the P matrix retains the same first dimension as the number of songs, and the second dimension as the number of factors specified</p>
+<p>Q - the Q matrix retains the same first dimension as the number of playlists, and the second dimension as the number of factors specified.</p>
+<p>Therefore multiplying P and Q^T will result in a matrix multiplication of dimensions (n_songs, n_factors)@(n_factors, n_playlists)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">P&quot;</span><span class="p">);</span> <span class="nb">print</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">t(Q)&quot;</span><span class="p">);</span> <span class="nb">print</span><span class="p">(</span><span class="n">Q</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+P
+[[ 0.97088774  0.02553765]
+ [ 0.6767457   0.38988228]
+ [ 1.11759811  0.48473027]
+ [ 0.53003531 -0.06931035]
+ [ 0.97088774  0.02553765]
+ [ 0.56443655  1.03255953]
+ [ 0.41772618  0.5733669 ]
+ [ 0.12358414  0.93771154]
+ [ 0.12358413  0.93771153]
+ [ 0.12358413  0.93771154]]
+
+t(Q)
+[[ 1.10303853  0.87515347  0.17300104 -0.17971153]
+ [-0.30205602  0.09070973  0.98880625  1.07918037]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Multiplying the two matrices back together produces the predicted matrix below. The reconstruction is not perfect, as information was lost through the decomposition. The interesting result here however is where the model appears to be making "mistakes". Looking just at playlist two, the most evidently "incorrect" predictions are songs 2 and 7.</p>
+<ul>
+<li>Song 2: 0 on the original playlist but 0.63 on the predictions</li>
+<li>Song 7: 1 on the original playlist but 0.41 on the predictions</li>
+</ul>
+<p>Song 2 whilst not on the original playlist is on both playlist 1 and playlist 3. We know through construction that playlist 1 and 2 are similar and playlist 2 and 3 are somewhat similar. Therefore it makes intuitive sense that the model would recommend this song as something which belongs on playlist 2.</p>
+<p>Similarly for song 7, it doesn't truly belong to playlist 1 or playlist 3 and hence is only shared between playlists 2 and 4. It therefore again makes sense given construction that the model would generalize and rate this song as a worse fit for playlist two overall.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">pred&quot;</span><span class="p">);</span> <span class="nb">print</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">R&quot;</span><span class="p">);</span> <span class="nb">print</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+pred
+[[ 1.06321278  0.85199229  0.19321638 -0.14692   ]
+ [ 0.62871029  0.62762246  0.50259575  0.29913429]
+ [ 1.08633808  1.02203961  0.67264996  0.32226612]
+ [ 0.60558498  0.45757512  0.02316215 -0.17005183]
+ [ 1.06321278  0.85199229  0.19321638 -0.14692   ]
+ [ 0.31070444  0.58763181  1.11864944  1.01288221]
+ [ 0.28757914  0.41758447  0.63921584  0.54369609]
+ [-0.14692334  0.19321466  0.94859523  0.98975039]
+ [-0.14692336  0.19321464  0.94859521  0.98975038]
+ [-0.14692335  0.19321465  0.94859522  0.98975039]]
+
+R
+[[1 1 0 0]
+ [1 0 1 0]
+ [1 1 1 0]
+ [1 0 0 0]
+ [1 1 0 0]
+ [0 1 1 1]
+ [0 1 0 1]
+ [0 0 1 1]
+ [0 0 1 1]
+ [0 0 1 1]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>These simple but illuminating results provides an intuitive understanding of what Matrix Factorization models are actually doing and how a prediction can be made using these models. This is just a simple demonstration however and for the true modelling approach we will be utilizing the matrix factorization implemented by sklearn.</p>
+
+</div>
+</div>
+</div>
+ 
+
